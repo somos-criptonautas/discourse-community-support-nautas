@@ -4,7 +4,7 @@
 
 .donate-modal__close {
   position: fixed;
-  z-index: 2000;
+  z-index: z("modal", "content");
   top: 0.85rem;
   right: 0.85rem;
   width: 2.35rem;
@@ -13,7 +13,7 @@
   padding: 0;
   border: 1px solid rgba(var(--secondary-rgb), 0.35);
   border-radius: 50%;
-  background: rgb(0 0 0 / 18%);
+  background: rgba(var(--always-black-rgb), 0.18);
   color: var(--secondary);
   box-shadow: 0 8px 22px -16px rgba(var(--always-black-rgb), 0.7);
   backdrop-filter: blur(8px);
