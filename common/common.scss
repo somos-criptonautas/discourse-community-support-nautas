@@ -48,6 +48,7 @@
   .d-modal__body {
     padding: 0 !important;
     overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .donate-modal__content {
