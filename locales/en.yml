@@ -1,0 +1,153 @@
+en:
+  hero:
+    eyebrow: "Community support"
+    title: "Help keep our community running"
+    highlights_label: "Why support"
+  featured:
+    kicker: "Featured support option"
+  copied_value: "Value copied"
+  no_copied_value: "Copying failed"
+  methods:
+    kicker: "Available options"
+    title: "Support in the way that works for you"
+  footer:
+    thanks: "Thank you for supporting the community."
+  support_bar:
+    aria_label: "Community support"
+    progress_label: "Support goal progress"
+    default_label: "Community support goal"
+    of_goal: "of"
+    goal_reached: "Goal reached"
+    goal_exceeded: "Goal exceeded"
+    period_one_time: "One-time"
+    period_monthly: "Monthly"
+    period_yearly: "Yearly"
+  main_heading_content:
+    title: "Support the community"
+    description: "Community-funded projects rely on people who find them useful. Every contribution helps with hosting, development, and ongoing maintenance."
+  supporters:
+    label: "Our supporters"
+    title: "Our supporters"
+    more_title: "More supporters"
+    more_label:
+      one: "+%{count} more supporter"
+      other: "+%{count} more supporters"
+  theme_metadata:
+    settings:
+      show_for_members: "Display the donation trigger for logged-in users"
+      show_for_anon: "Display the donation trigger for anonymous users"
+      display_on_homepage: "Display the donation trigger on the configured homepage"
+      url_must_contain: "Display the donation trigger on matching paths. Add <code>*</code> to the end for a wildcard"
+      trust_level: "Minimum trust level required to display the donation trigger"
+      auto_open_modal: "Automatically open the support modal when it has not been dismissed"
+      auto_open_delay: "Delay before automatically opening the support modal"
+      modal_size: "Width of the support modal"
+      cookie_lifespan: "How long to remember a dismissed support modal"
+      excluded_groups: "Groups that should not see the automatic support trigger, outlet widgets or generic embeds; contextual [wrap=donate] blocks and the manual #donate link remain available"
+      design: "Visual design used by the support UI"
+      default_post_view: "Default layout used by embedded support blocks"
+      enable_post_embed: "Enable [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] and [wrap=donate-progress] in posts"
+      support_bar_enabled: "Enable the support progress bar"
+      support_bar_layout: "Support bar layout"
+      support_bar_in_modal: "Show the support bar in the modal"
+      support_bar_in_posts: "Show the support bar in post embeds"
+      support_bar_in_outlets: "Show the support bar in plugin outlet widgets"
+      support_bar_in_embeds: "Show the support bar in generic HTML embeds"
+      support_goal: "Support goal amount. Set to 0 to hide the progress bar"
+      support_current: "Current supported amount"
+      support_currency: "Currency code displayed next to support amounts, for example EUR or USD"
+      support_label: "Optional custom label for the support goal"
+      support_period: "Goal period"
+      outlet_enabled: "Enable rendering the support widget directly in Discourse plugin outlets"
+      outlet_locations: "Plugin outlet names, separated with |. Examples: above-main-container, before-topic-list, after-topic-list, topic-list-bottom, below-site-header"
+      outlet_view: "Layout used for plugin outlet widgets"
+      outlet_design: "Design used for plugin outlet widgets"
+      embed_widget_enabled: "Render the generic <code>data-donation-widget=\"support\"</code> embed"
+      supporter_avatars_enabled: "Show supporter avatars in the support bar (supporters are configured below)"
+      supporter_avatar_count: "Number of supporter avatars shown directly in the support bar"
+      show_supporter_amounts: "Show supporter contribution amounts in the supporter list"
+      supporters:
+        description: "Add supporters manually. The username resolves to the public Discourse profile and avatar automatically."
+        schema:
+          properties:
+            username:
+              label: "Username"
+              description: "Discourse username of the supporter"
+            amount:
+              label: "Amount"
+              description: "Optional contribution amount"
+            currency:
+              label: "Currency"
+              description: "Optional currency code, for example EUR or USD"
+      supporter_groups: "Automatically pull in supporters from one or more groups, ordered by group-join date, newest first. Complements — doesn't replace — the manual list above."
+      donation_methods:
+        description: "Add, edit, reorder and configure the available support methods"
+        schema:
+          properties:
+            featured:
+              label: "Featured"
+              description: "Use this as the featured support method"
+            name:
+              label: "Name"
+              description: "Support method name"
+            description:
+              label: "Description"
+              description: "Short description"
+            button_text:
+              label: "Button text"
+              description: "Support button label"
+            url:
+              label: "URL"
+              description: "Full support URL"
+            icon:
+              label: "Logo"
+              description: "Optional provider logo"
+            owner:
+              label: "Owner"
+              description: "Optional recipient or beneficiary"
+            provider:
+              label: "Provider"
+              description: "Optional payment provider or institution"
+            copy_label:
+              label: "Copy value label"
+              description: "For example account number, handle, or identifier"
+            copy_value:
+              label: "Copy value"
+              description: "Value users can copy with one click"
+            translations:
+              description: "Optional translated content for each supported locale"
+              schema:
+                properties:
+                  locale:
+                    label: "Locale"
+                  name:
+                    label: "Name"
+                  description:
+                    label: "Description"
+                  button_text:
+                    label: "Button text"
+                  copy_label:
+                    label: "Copy label"
+                  owner:
+                    label: "Owner"
+                  provider:
+                    label: "Provider"
+      support_highlights:
+        description: "Highlights shown in the support modal hero. Add one or more items and optionally translate each item."
+        schema:
+          properties:
+            text:
+              label: "Text"
+              description: "Highlight text"
+            icon:
+              label: "Icon"
+              description: "Discourse icon name"
+            translations:
+              description: "Optional translated text for each supported locale"
+              schema:
+                properties:
+                  locale:
+                    label: "Locale"
+                  text:
+                    label: "Text"
+      auto_open_delay_description: "Delay in milliseconds before the support modal opens automatically"

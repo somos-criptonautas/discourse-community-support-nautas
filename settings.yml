@@ -1,0 +1,393 @@
+show_for_members:
+  type: bool
+  default: true
+show_for_anon:
+  type: bool
+  default: false
+display_on_homepage:
+  type: bool
+  default: true
+url_must_contain:
+  type: list
+  list_type: simple
+  default: "*"
+trust_level:
+  type: string
+  default: "0"
+auto_open_modal:
+  type: bool
+  default: true
+auto_open_delay:
+  type: integer
+  default: 1500
+  min: 0
+  description: auto_open_delay_description
+modal_size:
+  type: enum
+  default: large
+  choices:
+    - normal
+    - large
+    - maximized
+cookie_lifespan:
+  type: enum
+  default: none
+  choices:
+    - minute
+    - day
+    - week
+    - month
+    - year
+excluded_groups:
+  type: list
+  list_type: group
+  default: ""
+
+design:
+  type: enum
+  default: classic
+  choices:
+    - classic
+    - minimal
+    - modern
+
+default_post_view:
+  type: enum
+  default: full
+  choices:
+    - full
+    - compact
+    - minimal
+
+enable_post_embed:
+  type: bool
+  default: false
+
+support_bar_enabled:
+  type: bool
+  default: false
+support_goal:
+  type: integer
+  default: 0
+  min: 0
+support_current:
+  type: integer
+  default: 0
+  min: 0
+support_currency:
+  type: string
+  default: ""
+support_label:
+  type: string
+  default: ""
+support_period:
+  type: enum
+  default: monthly
+  choices:
+    - one_time
+    - monthly
+    - yearly
+support_bar_layout:
+  type: enum
+  default: inline
+  choices:
+    - inline
+    - stacked
+    - compact
+support_bar_in_modal:
+  type: bool
+  default: true
+support_bar_in_posts:
+  type: bool
+  default: true
+support_bar_in_outlets:
+  type: bool
+  default: true
+support_bar_in_embeds:
+  type: bool
+  default: true
+supporter_avatars_enabled:
+  type: bool
+  default: false
+supporter_avatar_count:
+  type: integer
+  default: 5
+  min: 1
+  max: 20
+show_supporter_amounts:
+  type: bool
+  default: false
+
+# Highlights shown in the hero section. Each highlight can be translated
+# using the same locale list as donation methods.
+support_highlights:
+  type: objects
+  default:
+    - text: "No ads required"
+      icon: "ban"
+    - text: "Community funded"
+      icon: "user-group"
+  schema:
+    name: support_highlight
+    identifier: text
+    properties:
+      text:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 120
+      icon:
+        type: icon
+        default: "heart"
+        validations:
+          max_length: 60
+      translations:
+        type: objects
+        schema:
+          name: translation
+          identifier: locale
+          properties:
+            locale:
+              type: enum
+              required: true
+              choices:
+                - ar
+                - bs_BA
+                - ca
+                - cs
+                - da
+                - de
+                - el
+                - en
+                - es
+                - et
+                - fa_IR
+                - fi
+                - fr
+                - gl
+                - he
+                - hu
+                - id
+                - it
+                - ja
+                - ko
+                - lv
+                - nb_NO
+                - nl
+                - pl_PL
+                - pt
+                - pt_BR
+                - ro
+                - ru
+                - sk
+                - sq
+                - sr
+                - sv
+                - te
+                - th
+                - tr_TR
+                - uk
+                - ur
+                - vi
+                - zh_CN
+                - zh_TW
+            text:
+              type: string
+              validations:
+                max_length: 120
+
+embed_widget_enabled:
+  type: bool
+  default: true
+outlet_enabled:
+  type: bool
+  default: false
+outlet_locations:
+  type: list
+  list_type: simple
+  default: ""
+outlet_view:
+  type: enum
+  default: compact
+  choices:
+    - full
+    - compact
+    - minimal
+    - progress
+outlet_design:
+  type: enum
+  default: classic
+  choices:
+    - classic
+    - minimal
+    - modern
+
+# Supporters are entered manually. The username is resolved to the Discourse
+# profile and avatar at runtime. The objects setting currently supports string
+# properties here, so the admin editor uses a username text field.
+supporters:
+  type: objects
+  default: []
+  schema:
+    name: supporter
+    identifier: username
+    properties:
+      username:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 60
+      amount:
+        type: integer
+        default: 0
+        validations:
+          min: 0
+      currency:
+        type: string
+        default: ""
+        validations:
+          max_length: 10
+
+# Optional: automatically pull in supporters from one or more groups, sorted
+# by newest group-join date first (via GroupsController#members
+# order=added_at). Complements — doesn't replace — the manual list above,
+# for supporters without a matching group membership (e.g. an offline
+# donor). On a username conflict the manual entry wins, since it can carry
+# a contribution amount the group membership doesn't.
+supporter_groups:
+  type: list
+  list_type: group
+  default: ""
+
+# Generic provider-agnostic donation methods.
+donation_methods:
+  type: objects
+  default: []
+  schema:
+    name: donation_method
+    identifier: name
+    properties:
+      featured:
+        type: boolean
+        default: false
+      name:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 80
+      description:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 500
+      button_text:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 80
+      url:
+        type: string
+        default: ""
+        validations:
+          max_length: 2048
+      icon:
+        type: upload
+      owner:
+        type: string
+        default: ""
+        validations:
+          max_length: 120
+      provider:
+        type: string
+        default: ""
+        validations:
+          max_length: 120
+      copy_label:
+        type: string
+        default: ""
+        validations:
+          max_length: 80
+      copy_value:
+        type: string
+        default: ""
+        validations:
+          max_length: 2048
+      translations:
+        type: objects
+        schema:
+          name: translation
+          identifier: locale
+          properties:
+            locale:
+              type: enum
+              required: true
+              choices:
+                - ar
+                - bs_BA
+                - ca
+                - cs
+                - da
+                - de
+                - el
+                - en
+                - es
+                - et
+                - fa_IR
+                - fi
+                - fr
+                - gl
+                - he
+                - hu
+                - id
+                - it
+                - ja
+                - ko
+                - lv
+                - nb_NO
+                - nl
+                - pl_PL
+                - pt
+                - pt_BR
+                - ro
+                - ru
+                - sk
+                - sq
+                - sr
+                - sv
+                - te
+                - th
+                - tr_TR
+                - uk
+                - ur
+                - vi
+                - zh_CN
+                - zh_TW
+            name:
+              type: string
+              validations:
+                max_length: 80
+            description:
+              type: string
+              validations:
+                max_length: 500
+            button_text:
+              type: string
+              validations:
+                max_length: 80
+            copy_label:
+              type: string
+              validations:
+                max_length: 80
+            owner:
+              type: string
+              validations:
+                max_length: 120
+            provider:
+              type: string
+              validations:
+                max_length: 120

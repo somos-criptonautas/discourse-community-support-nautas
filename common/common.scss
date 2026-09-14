@@ -1,0 +1,1318 @@
+@use "lib/viewport";
+
+// Close
+
+.donate-modal__close {
+  position: fixed;
+  z-index: 2000;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  min-height: 2.35rem;
+  padding: 0;
+  border: 1px solid rgba(var(--secondary-rgb), 0.35);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 18%);
+  color: var(--secondary);
+  box-shadow: 0 8px 22px -16px rgba(var(--always-black-rgb), 0.7);
+  backdrop-filter: blur(8px);
+  transition: background 0.18s ease;
+
+  .d-icon {
+    color: currentColor;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--always-black-rgb), 0.30);
+  }
+}
+
+//-------------------------------------------------------------------------//
+//  Modal
+//-------------------------------------------------------------------------//
+
+.d-modal.donate-modal,
+.donate-embed {
+  --modal-max-width: 760px;
+  --donate-line: var(--primary-low);
+  --donate-muted: var(--primary-medium);
+  --donate-soft-shadow: 0 24px 70px -42px rgba(var(--always-black-rgb), 0.45);
+
+  .d-modal__container {
+    overflow: hidden;
+  }
+
+  // The native DModal header is hidden so the hero is the real visual top.
+  .d-modal__body {
+    padding: 0 !important;
+    overflow-y: auto;
+  }
+
+  .donate-modal__content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 0;
+    box-shadow: var(--donate-soft-shadow);
+  }
+
+  // -----------------------------------------------------------------------
+  // Hero — this is intentionally the full-width visual top of the modal.
+  // -----------------------------------------------------------------------
+
+  .donate-modal__hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: flex-start;
+    gap: 0.8rem 1rem;
+    min-height: 220px;
+    overflow: hidden;
+    padding: 2rem clamp(1.35rem, 4vw, 2.4rem) 1.8rem;
+    color: var(--secondary);
+    background:
+      radial-gradient(circle at 86% 18%, rgba(var(--secondary-rgb), 0.12) 0, transparent 30%),
+      linear-gradient(135deg,
+        rgba(var(--tertiary-rgb), 0.96) 0%,
+        rgba(var(--tertiary-rgb), 0.82) 58%,
+        rgba(var(--tertiary-rgb), 0.72) 100%);
+  }
+
+  .donate-modal__hero-glow {
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .donate-modal__hero-glow--one {
+    top: -5rem;
+    right: 7rem;
+    width: 15rem;
+    height: 15rem;
+    background: rgba(var(--secondary-rgb), 0.08);
+    filter: blur(8px);
+  }
+
+  .donate-modal__hero-glow--two {
+    right: -4rem;
+    bottom: -7rem;
+    width: 18rem;
+    height: 18rem;
+    background: rgba(var(--tertiary-rgb), 0.22);
+    filter: blur(18px);
+  }
+
+  .donate-modal__hero-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border: 1px solid rgba(var(--secondary-rgb), 0.28);
+    border-radius: 1.2rem;
+    background: var(--secondary);
+    color: var(--love);
+    box-shadow: 0 18px 38px -24px rgba(var(--always-black-rgb), 0.4);
+    isolation: isolate;
+
+    &::before {
+      position: absolute;
+      inset: 0.45rem;
+      border: 1px solid var(--love);
+      border-radius: 0.95rem;
+      content: "";
+      opacity: 0;
+      pointer-events: none;
+      animation: donate-heart-pulse 2.4s ease-out infinite;
+    }
+
+    .d-icon {
+      position: relative;
+      z-index: 1;
+      font-size: 1.45rem;
+      color: currentColor;
+      filter: drop-shadow(0 0 0 transparent);
+      animation: donate-heart-beat 2.4s ease-in-out infinite;
+      transform-origin: center;
+    }
+  }
+
+  @keyframes donate-heart-beat {
+    0%,
+    45%,
+    100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0 transparent);
+    }
+
+    10% {
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 7px var(--love));
+    }
+
+    20% {
+      transform: scale(0.98);
+      filter: drop-shadow(0 0 3px var(--love));
+    }
+
+    30% {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 6px var(--love));
+    }
+  }
+
+  @keyframes donate-heart-pulse {
+    0%,
+    45%,
+    100% {
+      transform: scale(0.78);
+      opacity: 0;
+    }
+
+    12% {
+      transform: scale(1);
+      opacity: 0.42;
+    }
+
+    35% {
+      transform: scale(1.35);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .donate-modal__hero-icon::before,
+    .donate-modal__hero-icon .d-icon {
+      animation: none;
+    }
+  }
+
+  .donate-modal__hero-copy {
+    min-width: 0;
+  }
+
+  .donate-modal__eyebrow {
+    margin-bottom: 0.3rem;
+    color: var(--secondary);
+    font-size: var(--font-down-1);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+  }
+
+  .donate-modal__hero-copy h2 {
+    margin: 0 0 0.4rem;
+    color: var(--secondary);
+    font-size: clamp(1.7rem, 4vw, 2.45rem);
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+  }
+
+  .donate-modal__hero-copy p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--secondary);
+    line-height: 1.55;
+  }
+
+  .donate-modal__hero-pills {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.15rem;
+  }
+
+  .donate-modal__hero-pills span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 1.9rem;
+    padding: 0.28rem 0.65rem;
+    border: 1px solid rgba(var(--secondary-rgb), 0.22);
+    border-radius: 999px;
+    background: rgba(var(--secondary-rgb), 0.1);
+    color: var(--secondary);
+    font-size: var(--font-down-2);
+    font-weight: 650;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    .d-icon {
+      color: currentColor;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Clean content area
+  // -----------------------------------------------------------------------
+
+  .donate-modal__inner {
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 1.8rem) clamp(1.1rem, 3vw, 1.8rem) 1.35rem;
+  }
+
+  .donate-modal__featured {
+    padding: 0 0 1.45rem;
+    border-bottom: 1px solid var(--donate-line);
+  }
+
+  .donate-modal__section-intro {
+    margin-bottom: 0.9rem;
+  }
+
+  .donate-modal__section-kicker,
+  .donate-modal__methods-heading > div > span {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--donate-muted);
+    font-size: var(--font-down-2);
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .donate-modal__section-intro h3,
+  .donate-modal__methods-heading h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: var(--font-up-2);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .donate-modal__section-intro p {
+    max-width: 62ch;
+    margin: 0.25rem 0 0;
+    color: var(--donate-muted);
+    line-height: 1.45;
+  }
+
+  .donate-option-card.--featured {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem;
+    border: 1px solid rgba(var(--primary-rgb), 0.10);
+    border-radius: 1rem;
+    background: rgba(var(--primary-rgb), 0.045);
+  }
+
+  .donate-option-card.--featured:hover {
+    border-color: rgba(var(--primary-rgb), 0.16);
+    background: rgba(var(--primary-rgb), 0.06);
+  }
+
+  .donate-option-card.--featured .donate-option-card__top {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .donate-option-card.--featured .donate-option-card__icon {
+    flex: 0 0 2.7rem;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 0.8rem;
+    background: var(--secondary);
+    color: var(--tertiary);
+    box-shadow: 0 8px 22px -18px rgba(var(--always-black-rgb), 0.5);
+  }
+
+  .donate-option-card.--featured .donate-option-card__identity {
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .donate-option-card.--featured .donate-option-card__identity strong {
+    color: var(--primary);
+    font-size: var(--font-0);
+    line-height: 1.2;
+  }
+
+  .donate-option-card.--featured .donate-option-card__identity span {
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
+  }
+
+  .donate-option-card.--featured .donate-option-card__content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    gap: 0.75rem;
+  }
+
+  .donate-modal__methods {
+    padding-top: 1.45rem;
+  }
+
+  .donate-modal__methods-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .donate-modal__methods-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: rgba(var(--primary-rgb), 0.06);
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
+    font-weight: 750;
+  }
+
+  .donate-modal__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .donate-option-card {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.85rem;
+    border: 1px solid var(--primary-low);
+    border-radius: 0.9rem;
+    background: var(--secondary);
+    color: var(--primary);
+    text-align: left;
+    box-shadow: none;
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+  }
+
+  .donate-option-card:hover {
+    border-color: var(--primary-low-mid);
+    background: rgba(var(--primary-rgb), 0.04);
+    transform: translateY(-1px);
+  }
+
+  .donate-option-card__top {
+    display: contents;
+  }
+
+  .donate-option-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--primary-low);
+    border-radius: 0.75rem;
+    background: rgba(var(--tertiary-rgb), 0.08);
+    color: rgba(var(--tertiary-rgb), 0.9);
+    overflow: hidden;
+  }
+
+  .donate-option-card__icon .d-icon { font-size: 0.95rem; }
+  .donate-option-card__fallback-icon { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+  .donate-option-card__img { width: 100%; height: 100%; padding: 0.3rem; object-fit: contain; }
+
+  .donate-option-card__identity {
+    grid-column: 2;
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  .donate-option-card:not(.--featured) .donate-option-card__identity {
+    display: none;
+  }
+
+  .donate-option-card__content {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .donate-option-card__content h3 {
+    margin: 0 0 0.18rem;
+    font-size: var(--font-up-1);
+    line-height: 1.2;
+  }
+
+  .donate-option-card__content p {
+    margin: 0 0 0.5rem;
+    color: var(--donate-muted);
+    line-height: 1.4;
+  }
+
+  // -----------------------------------------------------------------------
+  // Copy-to-clipboard chip — shared by the featured account card and every
+  // method card in the grid below. `.--featured` only changes the sizing;
+  // layout, hover and the "copied" state are defined once, here.
+  // -----------------------------------------------------------------------
+
+  .donate-option-card__copy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    margin: 0 0 0.5rem;
+    padding: 0.55rem 0.6rem 0.55rem 0.75rem;
+    border: 1px solid rgba(var(--tertiary-rgb), 0.28);
+    border-radius: 0.7rem;
+    background: rgba(var(--tertiary-rgb), 0.06);
+    color: var(--primary);
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 10px 28px -24px rgba(var(--always-black-rgb), 0.55);
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .donate-option-card__copy:hover,
+  .donate-option-card__copy:focus-visible {
+    border-color: rgba(var(--tertiary-rgb), 0.7);
+    background: rgba(var(--tertiary-rgb), 0.11);
+    box-shadow: 0 14px 30px -22px rgba(var(--always-black-rgb), 0.55);
+    transform: translateY(-1px);
+  }
+
+  .donate-option-card__copy.--copied {
+    border-color: var(--success);
+    background: rgba(var(--success-rgb), 0.09);
+    color: var(--success);
+  }
+
+  .donate-option-card.--featured .donate-option-card__copy {
+    width: auto;
+    min-width: min(15rem, 100%);
+    max-width: 100%;
+    min-height: 3.1rem;
+    margin: 0;
+    padding: 0.65rem 0.75rem 0.65rem 1rem;
+    border-radius: 0.85rem;
+  }
+
+  .donate-option-card__copy-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.08rem;
+  }
+
+  .donate-option-card__copy-label {
+    color: var(--donate-muted);
+    font-size: var(--font-down-2);
+    font-weight: 650;
+  }
+
+  .donate-option-card__copy.--copied .donate-option-card__copy-label {
+    color: var(--success);
+  }
+
+  .donate-option-card__copy-value {
+    min-width: 0;
+    overflow: hidden;
+    font-family: var(--font-family-monospace);
+    font-size: var(--font-down-1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .donate-option-card.--featured .donate-option-card__copy-value {
+    font-size: var(--font-0);
+  }
+
+  .donate-option-card__copy-icon {
+    display: flex;
+    flex: 0 0 1.9rem;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 0.55rem;
+    background: rgba(var(--tertiary-rgb), 0.9);
+    color: var(--secondary);
+    transition: background 0.16s ease, color 0.16s ease;
+  }
+
+  .donate-option-card__copy-icon .d-icon {
+    font-size: 0.85rem;
+  }
+
+  .donate-option-card__copy.--copied .donate-option-card__copy-icon {
+    background: var(--success);
+    color: var(--secondary);
+  }
+
+  .donate-option-card.--featured .donate-option-card__copy-icon {
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+  }
+
+  .donate-option-card__content a.btn-primary {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+
+  .donate-modal__closing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-top: 1.3rem;
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
+
+    .d-icon {
+      color: var(--love);
+    }
+  }
+
+  @include viewport.until(sm) {
+    .donate-modal__hero {
+      grid-template-columns: auto minmax(0, 1fr);
+      min-height: 0;
+      padding: 1.7rem 1.05rem 1.35rem;
+    }
+
+    .donate-modal__hero-icon {
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 1rem;
+    }
+
+    .donate-modal__hero-copy h2 {
+      font-size: 1.55rem;
+    }
+
+    .donate-modal__hero-pills {
+      grid-column: 1 / -1;
+      margin-top: 0.15rem;
+    }
+
+    .donate-modal__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .donate-option-card.--featured {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.8rem;
+    }
+
+    .donate-option-card.--featured .donate-option-card__top,
+    .donate-option-card.--featured .donate-option-card__content {
+      width: 100%;
+    }
+
+    .donate-option-card.--featured .donate-option-card__content {
+      justify-content: flex-start;
+    }
+
+    .donate-option-card.--featured .donate-option-card__copy {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .donate-modal__methods-count {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  @include viewport.until(xs) {
+    .donate-modal__hero {
+      grid-template-columns: 1fr;
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .donate-modal__hero-icon {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .donate-modal__hero-copy h2 {
+      font-size: 1.45rem;
+    }
+
+    .donate-modal__hero-pills {
+      gap: 0.35rem;
+    }
+
+    .donate-modal__hero-pills span {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donate-option-card,
+  .donate-option-card__copy,
+  .donate-option-card__copy-icon {
+    transition: none;
+  }
+}
+
+//-------------------------------------------------------------------------//
+//  Supporter popover
+//-------------------------------------------------------------------------//
+
+.donate-supporters__menu-content {
+  z-index: 1650 !important;
+
+  .donate-supporters__list {
+    display: flex;
+    flex-direction: column;
+    max-height: min(28rem, 60vh);
+    overflow-y: auto;
+    padding: 0.45rem;
+  }
+
+  .donate-supporters__list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0.55rem 0.55rem;
+    color: var(--primary);
+    font-size: var(--font-down-1);
+  }
+
+  .donate-supporters__list-heading span {
+    color: var(--primary-medium);
+    font-size: var(--font-down-2);
+  }
+
+  .donate-supporters__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.45rem 0.55rem;
+    border-radius: 0.55rem;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .donate-supporters__item:hover,
+  .donate-supporters__item:focus-visible {
+    background: var(--primary-low);
+  }
+
+  .donate-supporters__item-avatar {
+    width: 2rem;
+    height: 2rem;
+    overflow: hidden;
+    flex: 0 0 2rem;
+    border: 1px solid var(--primary-low);
+    border-radius: 50%;
+    background: var(--tertiary-low);
+  }
+
+  .donate-supporters__item-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .donate-supporters__item-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.08rem;
+  }
+
+  .donate-supporters__item-copy strong,
+  .donate-supporters__item-copy span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .donate-supporters__item-copy span {
+    color: var(--primary-medium);
+    font-size: var(--font-down-2);
+  }
+}
+
+// Discourse's core user card (opened via data-user-card, triggered by
+// clicking a supporter avatar) ships with a much lower z-index than our
+// modal or the supporters DMenu, since core doesn't expect it to be opened
+// from inside either. Without this it renders visually behind both. This is
+// intentionally global (not scoped under .donate-modal) because the card
+// is appended to its own container, not nested inside our markup.
+.user-card {
+  z-index: 1700 !important;
+}
+
+//-------------------------------------------------------------------------//
+//  Support progress bar
+//-------------------------------------------------------------------------//
+
+.d-modal.donate-modal,
+.donate-embed {
+  .donate-support-bar {
+    margin: 0;
+    padding: 0.9rem 1rem 0.85rem;
+    border-bottom: 1px solid var(--primary-low);
+    background: var(--secondary);
+  }
+
+  .donate-support-bar__heading,
+  .donate-support-bar__totals {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .donate-support-bar__heading {
+    margin-bottom: 0.5rem;
+  }
+
+  .donate-support-bar__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--primary);
+    font-size: var(--font-down-1);
+    font-weight: 700;
+  }
+
+  .donate-support-bar__label .d-icon {
+    color: var(--love);
+  }
+
+  .donate-support-bar__heading > strong {
+    font-size: var(--font-down-1);
+  }
+
+  .donate-supporters {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: -0.1rem 0 0.5rem;
+  }
+
+  .donate-supporters__avatars {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .donate-supporters__avatar,
+  .donate-supporters__item-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex: 0 0 auto;
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+    background: var(--tertiary-low);
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .donate-supporters__avatar {
+    margin-inline-end: -0.45rem;
+    box-shadow: 0 1px 3px rgba(var(--always-black-rgb), 0.18);
+  }
+
+  .donate-supporters__avatar:last-child {
+    margin-inline-end: 0;
+  }
+
+  .donate-supporters__avatar span {
+    font-size: var(--font-down-2);
+  }
+
+  .donate-supporters__more-button {
+    padding: 0;
+  }
+
+  // Reserves the exact footprint of the real avatar row while supporters
+  // are still loading, so the row doesn't pop in and shift the layout
+  // around it. Reuses .donate-supporters__avatar for identical
+  // size/border/overlap and only swaps the fill + adds the pulse.
+  .donate-supporters__avatar--placeholder {
+    width: 24px;
+    height: 24px;
+    background: var(--primary-low);
+    animation: donate-supporters-placeholder-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes donate-supporters-placeholder-pulse {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .donate-supporters__avatar--placeholder {
+      animation: none;
+    }
+  }
+
+  .donate-support-bar__track {
+    position: relative;
+    width: 100%;
+    height: 0.55rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--tertiary-low);
+  }
+
+  .donate-support-bar__track.--track-tertiary {
+    background: var(--tertiary-low);
+  }
+
+  .donate-support-bar__track.--track-success-low {
+    background: var(--success-low);
+  }
+
+  .donate-support-bar__track.--track-success {
+    background: var(--success);
+  }
+
+  .donate-support-bar__fills {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .donate-support-bar__fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    min-width: 0;
+    border-radius: inherit;
+    transition: width 0.35s ease, background-color 0.25s ease;
+  }
+
+  .donate-support-bar__fill.--fill-tertiary {
+    background: var(--tertiary);
+  }
+
+  .donate-support-bar__fill.--fill-success {
+    background: var(--success);
+  }
+
+  .donate-support-bar__totals {
+    margin-top: 0.45rem;
+    color: var(--donate-muted);
+    font-size: var(--font-down-2);
+  }
+
+  .donate-support-bar__totals strong {
+    color: var(--primary);
+    font-size: var(--font-down-1);
+  }
+}
+
+//-------------------------------------------------------------------------//
+//  Presentation variants
+//-------------------------------------------------------------------------//
+
+.donate-modal.donate-modal,
+.donate-embed {
+  // The content root stays intentionally simple. Presentation is controlled
+  // by the surrounding host (modal/embed/outlet) so all render targets share
+  // the same component implementation.
+
+  &.--no-support-bar {
+    .donate-support-bar {
+      display: none;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Design: Minimal
+  // -----------------------------------------------------------------------
+
+  &.--design-minimal {
+    --donate-soft-shadow: none;
+
+    .donate-modal__hero {
+      min-height: 0;
+      padding: 1.15rem 1.15rem 0.9rem;
+      border-bottom: 1px solid var(--primary-low);
+      background: var(--secondary);
+      color: var(--primary);
+    }
+
+    .donate-modal__hero-glow,
+    .donate-modal__hero-pills {
+      display: none;
+    }
+
+    .donate-modal__hero-icon {
+      width: 2.8rem;
+      height: 2.8rem;
+      border-color: var(--primary-low);
+      background: var(--primary-low);
+      color: var(--love);
+      box-shadow: none;
+    }
+
+    .donate-modal__hero-icon::before {
+      display: none;
+    }
+
+    .donate-modal__hero-icon .d-icon {
+      animation: none;
+      font-size: 1.1rem;
+    }
+
+    .donate-modal__eyebrow,
+    .donate-modal__hero-copy p {
+      display: none;
+    }
+
+    .donate-modal__hero-copy h2 {
+      margin: 0;
+      color: var(--primary);
+      font-size: var(--font-up-2);
+      letter-spacing: -0.025em;
+    }
+
+    .donate-modal__inner {
+      padding: 0.9rem;
+    }
+
+    .donate-modal__featured {
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--primary-low);
+    }
+
+    .donate-modal__section-intro,
+    .donate-modal__methods-heading,
+    .donate-modal__closing {
+      display: none;
+    }
+
+    .donate-modal__methods {
+      padding-top: 0.9rem;
+    }
+
+    .donate-modal__grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .donate-option-card,
+    .donate-option-card.--featured {
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: 0.75rem;
+      padding: 0.7rem;
+      border-radius: 0.75rem;
+      background: var(--secondary);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .donate-option-card.--featured {
+      border-color: var(--primary-low-mid);
+      background: rgba(var(--primary-rgb), 0.025);
+    }
+
+    .donate-option-card__top {
+      display: contents;
+    }
+
+    .donate-option-card.--featured .donate-option-card__top {
+      display: contents;
+    }
+
+    .donate-option-card__icon,
+    .donate-option-card.--featured .donate-option-card__icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.65rem;
+      box-shadow: none;
+    }
+
+    .donate-option-card__identity,
+    .donate-option-card__content {
+      grid-column: 2;
+    }
+
+    .donate-option-card__content h3 {
+      margin-bottom: 0.15rem;
+      font-size: var(--font-up-1);
+    }
+
+    .donate-option-card__content p {
+      margin-bottom: 0.45rem;
+      font-size: var(--font-down-1);
+    }
+
+    .donate-option-card__copy,
+    .donate-option-card.--featured .donate-option-card__copy {
+      min-height: 2.45rem;
+      margin-bottom: 0.4rem;
+      padding: 0.45rem 0.55rem 0.45rem 0.65rem;
+      border-radius: 0.6rem;
+      box-shadow: none;
+    }
+
+    .donate-option-card__copy-icon,
+    .donate-option-card.--featured .donate-option-card__copy-icon {
+      width: 1.7rem;
+      height: 1.7rem;
+      flex-basis: 1.7rem;
+    }
+
+    .donate-option-card__content a.btn-primary {
+      width: auto;
+      min-width: 0;
+      margin-top: 0.15rem;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Design: Modern
+  // -----------------------------------------------------------------------
+
+  &.--design-modern {
+    .donate-modal__content {
+      background:
+        radial-gradient(circle at 100% 0, rgba(var(--tertiary-rgb), 0.06), transparent 28rem),
+        var(--secondary);
+    }
+
+    .donate-modal__hero {
+      min-height: 250px;
+      grid-template-columns: 1fr;
+      align-content: end;
+      padding: clamp(1.8rem, 5vw, 3rem);
+      border-bottom: 0;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(var(--secondary-rgb), 0.16) 0, transparent 32%),
+        linear-gradient(135deg,
+          rgba(var(--tertiary-rgb), 1) 0%,
+          rgba(var(--tertiary-rgb), 0.82) 100%);
+    }
+
+    .donate-modal__hero-icon {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 1.4rem;
+    }
+
+    .donate-modal__hero-copy h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .donate-modal__hero-pills {
+      grid-column: 1;
+    }
+
+    .donate-modal__inner {
+      padding: clamp(1.2rem, 3vw, 2rem);
+    }
+
+    .donate-option-card {
+      border-radius: 1rem;
+      box-shadow: 0 16px 42px -34px rgba(var(--always-black-rgb), 0.55);
+    }
+
+    .donate-option-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 45px -34px rgba(var(--always-black-rgb), 0.62);
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // View: Compact
+  // -----------------------------------------------------------------------
+
+  &.--view-compact {
+    .donate-modal__hero {
+      min-height: 0;
+      padding: 1.15rem 1.2rem;
+    }
+
+    .donate-modal__hero-icon {
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 0.8rem;
+    }
+
+    .donate-modal__hero-copy h2 {
+      font-size: 1.45rem;
+    }
+
+    .donate-modal__hero-pills {
+      display: none;
+    }
+
+    .donate-modal__inner {
+      padding: 1rem;
+    }
+
+    .donate-option-card {
+      padding: 0.7rem;
+    }
+
+    .donate-modal__section-intro,
+    .donate-modal__closing {
+      display: none;
+    }
+
+    .donate-modal__featured {
+      padding-bottom: 1rem;
+    }
+
+    .donate-modal__methods {
+      padding-top: 1rem;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // View: Minimal
+  // -----------------------------------------------------------------------
+
+  &.--view-minimal {
+    .donate-modal__hero,
+    .donate-modal__closing,
+    .donate-modal__section-intro,
+    .donate-modal__methods-heading {
+      display: none;
+    }
+
+    .donate-modal__inner {
+      padding: 0.8rem;
+    }
+
+    .donate-modal__featured,
+    .donate-modal__methods {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .donate-modal__methods {
+      margin-top: 0.5rem;
+    }
+
+    .donate-modal__grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // View: Progress
+  // -----------------------------------------------------------------------
+
+  &.--view-progress {
+    .donate-modal__hero,
+    .donate-modal__featured,
+    .donate-modal__methods,
+    .donate-modal__closing,
+    .donate-modal__close {
+      display: none;
+    }
+
+    .donate-modal__inner {
+      padding: 0;
+    }
+
+    .donate-support-bar {
+      border-bottom: 0;
+    }
+  }
+}
+
+//-------------------------------------------------------------------------//
+//  Support bar layouts and states
+//-------------------------------------------------------------------------//
+
+.donate-modal.donate-modal,
+.donate-embed {
+  .donate-support-bar {
+    overflow: hidden;
+  }
+
+
+  .donate-support-bar.--layout-stacked {
+    .donate-support-bar__heading,
+    .donate-support-bar__totals {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .donate-support-bar__heading {
+      margin-bottom: 0.65rem;
+    }
+
+    .donate-support-bar__totals {
+      margin-top: 0.55rem;
+    }
+  }
+
+  .donate-support-bar.--layout-compact {
+    padding: 0.65rem 0.8rem;
+
+    .donate-support-bar__heading {
+      margin-bottom: 0.35rem;
+    }
+
+    .donate-support-bar__track {
+      height: 0.4rem;
+    }
+
+    .donate-support-bar__totals {
+      margin-top: 0.35rem;
+    }
+  }
+
+  .donate-support-bar.--goal-reached,
+  .donate-support-bar.--goal-exceeded {
+    .donate-support-bar__label .d-icon,
+    .donate-support-bar__totals strong {
+      color: var(--success);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donate-support-bar__row {
+    transition: none;
+  }
+}
