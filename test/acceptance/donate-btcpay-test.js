@@ -1,7 +1,9 @@
 import { click, fillIn, visit } from "@ember/test-helpers";
 import { test } from "qunit";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
-import { resetBtcpayCaches } from "../../javascripts/discourse/lib/btcpay";
+// The theme bundle mounts javascripts/discourse/ at the theme root, so theme
+// modules are two levels up from test/acceptance/ without the javascripts/ part.
+import { resetBtcpayCaches } from "../../discourse/lib/btcpay";
 
 const BTCPAY_METHOD = {
   name: "Bitcoin",
