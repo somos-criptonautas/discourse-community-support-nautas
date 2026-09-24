@@ -7,12 +7,7 @@ export default class DonatePost extends Component {
     const design = this.args.design || "classic";
     const support = this.args.showSupportBar ? "" : "--no-support-bar";
 
-    return [
-      "donate-post",
-      `--view-${view}`,
-      `--design-${design}`,
-      support,
-    ]
+    return ["donate-post", `--view-${view}`, `--design-${design}`, support]
       .filter(Boolean)
       .join(" ");
   }

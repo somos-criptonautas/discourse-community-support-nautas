@@ -19,7 +19,6 @@ export default apiInitializer("1.15.0", (api) => {
   const modal = api.container.lookup("service:modal");
   const currentUser = api.getCurrentUser();
 
-
   let autoOpenTimeout = null;
   let autoOpenAttempted = false;
 
@@ -84,7 +83,9 @@ export default apiInitializer("1.15.0", (api) => {
   }
 
   function meetsTrustLevel() {
-    return !currentUser || currentUser.trust_level >= Number(settings.trust_level);
+    return (
+      !currentUser || currentUser.trust_level >= Number(settings.trust_level)
+    );
   }
 
   function shouldShow() {
@@ -179,7 +180,11 @@ export default apiInitializer("1.15.0", (api) => {
     });
   }
 
-  if (settings.outlet_enabled && settings.outlet_locations && !isInExcludedGroup()) {
+  if (
+    settings.outlet_enabled &&
+    settings.outlet_locations &&
+    !isInExcludedGroup()
+  ) {
     settings.outlet_locations
       .split("|")
       .map((outlet) => outlet.trim())

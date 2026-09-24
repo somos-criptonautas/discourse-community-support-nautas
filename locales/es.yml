@@ -1,0 +1,161 @@
+es:
+  hero:
+    eyebrow: "Apoyo de la comunidad"
+    title: "Ayuda a mantener nuestra comunidad"
+    highlights_label: "Por qué apoyar"
+  featured:
+    kicker: "Opción de apoyo destacada"
+  btcpay:
+    amount_label: "Importe de la donación"
+    amount_placeholder: "Importe"
+    creating: "Creando factura…"
+    login_to_donate: "Inicia sesión para donar"
+  copied_value: "Valor copiado"
+  no_copied_value: "No se pudo copiar"
+  methods:
+    kicker: "Opciones disponibles"
+    title: "Apoya de la forma que mejor te funcione"
+  footer:
+    thanks: "Gracias por apoyar a la comunidad."
+  support_bar:
+    aria_label: "Apoyo de la comunidad"
+    progress_label: "Progreso del objetivo de apoyo"
+    default_label: "Objetivo de apoyo de la comunidad"
+    of_goal: "de"
+    goal_reached: "Objetivo alcanzado"
+    goal_exceeded: "Objetivo superado"
+    period_one_time: "Único"
+    period_monthly: "Mensual"
+    period_yearly: "Anual"
+  main_heading_content:
+    title: "Apoya a la comunidad"
+    description: "Los proyectos financiados por la comunidad dependen de quienes los encuentran útiles. Cada aportación ayuda con el alojamiento, el desarrollo y el mantenimiento."
+  supporters:
+    label: "Nuestros colaboradores"
+    title: "Nuestros colaboradores"
+    more_title: "Más colaboradores"
+    more_label:
+      one: "+%{count} colaborador más"
+      other: "+%{count} colaboradores más"
+  theme_metadata:
+    settings:
+      show_for_members: "Mostrar el activador de donaciones a los usuarios identificados"
+      show_for_anon: "Mostrar el activador de donaciones a los usuarios anónimos"
+      display_on_homepage: "Mostrar el activador de donaciones en la portada configurada"
+      url_must_contain: "Mostrar el activador de donaciones en las rutas que coincidan. Añade <code>*</code> al final como comodín"
+      trust_level: "Nivel de confianza mínimo para mostrar el activador de donaciones"
+      auto_open_modal: "Abrir automáticamente el modal de apoyo mientras no se haya descartado"
+      auto_open_delay: "Espera antes de abrir automáticamente el modal de apoyo"
+      modal_size: "Ancho del modal de apoyo"
+      cookie_lifespan: "Cuánto tiempo se recuerda que el modal de apoyo fue descartado"
+      excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"
+      design: "Diseño visual que usa la interfaz de apoyo"
+      default_post_view: "Disposición por defecto de los bloques de apoyo insertados"
+      enable_post_embed: "Activar [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] y [wrap=donate-progress] en las publicaciones"
+      support_bar_enabled: "Activar la barra de progreso de apoyo"
+      support_bar_layout: "Disposición de la barra de apoyo"
+      support_bar_in_modal: "Mostrar la barra de apoyo en el modal"
+      support_bar_in_posts: "Mostrar la barra de apoyo en los embeds de publicaciones"
+      support_bar_in_outlets: "Mostrar la barra de apoyo en los widgets de plugin outlet"
+      support_bar_in_embeds: "Mostrar la barra de apoyo en los embeds HTML genéricos"
+      support_goal: "Importe objetivo de apoyo. Ponlo a 0 para ocultar la barra de progreso"
+      support_current: "Importe recaudado actual. Solo se usa como respaldo: con el plugin de suscripciones BTCPay instalado, el total real de donaciones lo sustituye"
+      support_currency: "Código de moneda que se muestra junto a los importes, por ejemplo EUR o USD"
+      support_label: "Etiqueta personalizada opcional para el objetivo de apoyo"
+      support_period: "Periodo del objetivo"
+      outlet_enabled: "Renderizar el widget de apoyo directamente en los plugin outlets de Discourse"
+      outlet_locations: "Nombres de plugin outlet separados por |. Ejemplos: above-main-container, before-topic-list, after-topic-list, topic-list-bottom, below-site-header"
+      outlet_view: "Disposición de los widgets de plugin outlet"
+      outlet_design: "Diseño de los widgets de plugin outlet"
+      embed_widget_enabled: "Renderizar el embed genérico <code>data-donation-widget=\"support\"</code>"
+      supporter_avatars_enabled: "Mostrar los avatares de colaboradores en la barra de apoyo (se configuran más abajo)"
+      supporter_avatar_count: "Número de avatares de colaboradores visibles en la propia barra"
+      show_supporter_amounts: "Mostrar los importes aportados en la lista de colaboradores"
+      supporters:
+        description: "Añade colaboradores a mano. El nombre de usuario resuelve automáticamente al perfil público de Discourse y a su avatar."
+        schema:
+          properties:
+            username:
+              label: "Nombre de usuario"
+              description: "Nombre de usuario del colaborador en Discourse"
+            amount:
+              label: "Importe"
+              description: "Importe aportado, opcional"
+            currency:
+              label: "Moneda"
+              description: "Código de moneda opcional, por ejemplo EUR o USD"
+      supporter_groups: "Incorpora colaboradores automáticamente desde uno o varios grupos, ordenados por fecha de entrada al grupo, del más reciente al más antiguo. Complementa —no sustituye— la lista manual de arriba."
+      donation_methods:
+        description: "Añade, edita, reordena y configura los métodos de apoyo disponibles"
+        schema:
+          properties:
+            featured:
+              label: "Destacado"
+              description: "Usar este como método de apoyo destacado"
+            name:
+              label: "Nombre"
+              description: "Nombre del método de apoyo"
+            description:
+              label: "Descripción"
+              description: "Descripción breve"
+            button_text:
+              label: "Texto del botón"
+              description: "Etiqueta del botón de apoyo"
+            use_btcpay:
+              label: "Donación BTCPay"
+              description: "Cobrar la donación en el sitio mediante el plugin de suscripciones BTCPay en lugar de enlazar fuera. Muestra un campo de importe y un botón de donar; la URL se ignora."
+            url:
+              label: "URL"
+              description: "URL completa de apoyo"
+            icon:
+              label: "Logotipo"
+              description: "Logotipo del proveedor, opcional"
+            owner:
+              label: "Beneficiario"
+              description: "Destinatario o beneficiario, opcional"
+            provider:
+              label: "Proveedor"
+              description: "Proveedor de pago o entidad, opcional"
+            copy_label:
+              label: "Etiqueta del valor copiable"
+              description: "Por ejemplo número de cuenta, alias o identificador"
+            copy_value:
+              label: "Valor copiable"
+              description: "Valor que se copia con un clic"
+            translations:
+              description: "Contenido traducido opcional para cada idioma admitido"
+              schema:
+                properties:
+                  locale:
+                    label: "Idioma"
+                  name:
+                    label: "Nombre"
+                  description:
+                    label: "Descripción"
+                  button_text:
+                    label: "Texto del botón"
+                  copy_label:
+                    label: "Etiqueta copiable"
+                  owner:
+                    label: "Beneficiario"
+                  provider:
+                    label: "Proveedor"
+      support_highlights:
+        description: "Destacados que aparecen en la cabecera del modal de apoyo. Añade uno o más elementos y traduce cada uno si quieres."
+        schema:
+          properties:
+            text:
+              label: "Texto"
+              description: "Texto del destacado"
+            icon:
+              label: "Icono"
+              description: "Nombre de icono de Discourse"
+            translations:
+              description: "Texto traducido opcional para cada idioma admitido"
+              schema:
+                properties:
+                  locale:
+                    label: "Idioma"
+                  text:
+                    label: "Texto"
+      auto_open_delay_description: "Espera en milisegundos antes de que el modal de apoyo se abra automáticamente"

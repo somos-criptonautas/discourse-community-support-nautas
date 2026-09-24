@@ -1,15 +1,39 @@
 import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
+import { htmlSafe } from "@ember/template";
 import { i18n } from "discourse-i18n";
 import icon from "discourse/helpers/d-icon";
+import { fetchDonations } from "../lib/btcpay";
 import DonateSupporterAvatars from "./donate-supporter-avatars";
 
 export default class DonateSupportBar extends Component {
+  // Live total from discourse-btcpay-subscriptions; stays null when the
+  // plugin isn't installed, so the manual setting keeps working.
+  @tracked liveTotal = null;
+  @tracked liveCurrency = null;
+
+  constructor(owner, args) {
+    super(owner, args);
+    this.loadLiveTotal();
+  }
+
+  async loadLiveTotal() {
+    const data = await fetchDonations();
+
+    if (this.isDestroying || this.isDestroyed || data?.total == null) {
+      return;
+    }
+
+    this.liveTotal = Math.max(0, Number(data.total) || 0);
+    this.liveCurrency = data.currency || null;
+  }
+
   get goal() {
     return Math.max(0, Number(settings.support_goal) || 0);
   }
 
   get current() {
-    return Math.max(0, Number(settings.support_current) || 0);
+    return this.liveTotal ?? Math.max(0, Number(settings.support_current) || 0);
   }
 
   get rawPercentage() {
@@ -44,14 +68,17 @@ export default class DonateSupportBar extends Component {
     return remainder;
   }
 
+  get progressStyle() {
+    return htmlSafe(`width: ${this.progressWidth}%;`);
+  }
+
   get progressTrackClass() {
     if (this.rawPercentage < 100) {
       return "--track-tertiary";
     }
 
     const remainder = this.rawPercentage % 100;
-    const isExactHundred =
-      remainder < 0.000001 || 100 - remainder < 0.000001;
+    const isExactHundred = remainder < 0.000001 || 100 - remainder < 0.000001;
 
     return isExactHundred ? "--track-success" : "--track-success-low";
   }
@@ -96,7 +123,7 @@ export default class DonateSupportBar extends Component {
   }
 
   formatAmount(amount) {
-    const currency = settings.support_currency || "";
+    const currency = settings.support_currency || this.liveCurrency || "";
     const formatter = new Intl.NumberFormat(undefined, {
       maximumFractionDigits: 0,
     });
@@ -117,7 +144,11 @@ export default class DonateSupportBar extends Component {
         <div class="donate-support-bar__heading">
           <span class="donate-support-bar__label">
             {{icon "heart"}}
-            {{if settings.support_label settings.support_label (i18n (themePrefix "support_bar.default_label"))}}
+            {{if
+              settings.support_label
+              settings.support_label
+              (i18n (themePrefix "support_bar.default_label"))
+            }}
           </span>
           <strong>{{this.percentage}}%</strong>
         </div>
@@ -138,7 +169,7 @@ export default class DonateSupportBar extends Component {
           <span class="donate-support-bar__fills" aria-hidden="true">
             <span
               class="donate-support-bar__fill {{this.progressFillClass}}"
-              style="width: {{this.progressWidth}}%;"
+              style={{this.progressStyle}}
             ></span>
           </span>
         </div>
@@ -151,9 +182,11 @@ export default class DonateSupportBar extends Component {
             {{else if this.reached}}
               {{i18n (themePrefix "support_bar.goal_reached")}}
             {{else}}
-              {{i18n (themePrefix "support_bar.of_goal")}} {{this.goalText}}
+              {{i18n (themePrefix "support_bar.of_goal")}}
+              {{this.goalText}}
             {{/if}}
-            · {{this.periodText}}
+            ·
+            {{this.periodText}}
           </span>
         </div>
       </section>

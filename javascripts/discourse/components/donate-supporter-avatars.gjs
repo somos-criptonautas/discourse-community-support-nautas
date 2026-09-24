@@ -5,6 +5,7 @@ import { htmlSafe } from "@ember/template";
 import DMenu from "discourse/float-kit/components/d-menu";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import { i18n } from "discourse-i18n";
+import { fetchDonations } from "../lib/btcpay";
 
 const userCache = new Map();
 
@@ -83,19 +84,23 @@ export default class DonateSupporterAvatars extends Component {
     }
 
     try {
-      const [manual, fromGroups] = await Promise.all([
+      const sources = await Promise.all([
         this.loadManualSupporters(),
+        this.loadBtcpaySupporters(),
         this.loadGroupSupporters(),
       ]);
 
-      const seen = new Set(
-        manual.map((supporter) => supporter.username.toLowerCase())
-      );
-      const deduped = fromGroups.filter(
-        (supporter) => !seen.has(supporter.username.toLowerCase())
-      );
-
-      this.supporters = [...manual, ...deduped];
+      // Earlier sources win on a username conflict: a manual entry can carry
+      // an offline amount, and a real donation beats a group membership.
+      const seen = new Set();
+      this.supporters = sources.flat().filter((supporter) => {
+        const key = supporter.username.toLowerCase();
+        if (seen.has(key)) {
+          return false;
+        }
+        seen.add(key);
+        return true;
+      });
     } finally {
       this.isLoading = false;
     }
@@ -158,6 +163,25 @@ export default class DonateSupporterAvatars extends Component {
     );
 
     return resolved.filter(Boolean);
+  }
+
+  // Real donations recorded by discourse-btcpay-subscriptions. Empty when the
+  // plugin isn't installed, leaving the manual list as the only source.
+  async loadBtcpaySupporters() {
+    const data = await fetchDonations();
+    const supporters = Array.isArray(data?.supporters) ? data.supporters : [];
+
+    return supporters
+      .filter((entry) => entry.username)
+      .map((entry) => ({
+        username: entry.username,
+        name: entry.username,
+        avatar_template: entry.avatar_template,
+        amount: Math.max(0, Number(entry.amount) || 0),
+        currency: data.currency || "",
+        profileUrl: `/u/${encodeURIComponent(entry.username)}`,
+        initial: entry.username.slice(0, 1).toUpperCase(),
+      }));
   }
 
   async loadGroupSupporters() {
@@ -224,7 +248,10 @@ export default class DonateSupporterAvatars extends Component {
 
   <template>
     {{#if this.shouldShowPlaceholder}}
-      <div class="donate-supporters donate-supporters--loading" aria-hidden="true">
+      <div
+        class="donate-supporters donate-supporters--loading"
+        aria-hidden="true"
+      >
         <div class="donate-supporters__avatars">
           {{#each this.placeholderSlots}}
             <span
@@ -234,7 +261,10 @@ export default class DonateSupporterAvatars extends Component {
         </div>
       </div>
     {{else if this.shouldShow}}
-      <div class="donate-supporters" aria-label={{i18n (themePrefix "supporters.label")}}>
+      <div
+        class="donate-supporters"
+        aria-label={{i18n (themePrefix "supporters.label")}}
+      >
         <div class="donate-supporters__avatars" role="list">
           {{#each this.visibleSupporters as |supporter|}}
             <a
@@ -265,7 +295,10 @@ export default class DonateSupporterAvatars extends Component {
           <DMenu
             identifier="community-supporters"
             @label={{this.moreLabel}}
-            @ariaLabel={{i18n (themePrefix "supporters.more_label") count=this.remainingCount}}
+            @ariaLabel={{i18n
+              (themePrefix "supporters.more_label")
+              count=this.remainingCount
+            }}
             @title={{i18n (themePrefix "supporters.more_title")}}
             @class="btn-transparent donate-supporters__more-button"
             @contentClass="donate-supporters__menu-content"
@@ -284,7 +317,10 @@ export default class DonateSupporterAvatars extends Component {
                     data-user-card={{supporter.username}}
                     class="donate-supporters__item"
                   >
-                    <span class="donate-supporters__item-avatar" aria-hidden="true">
+                    <span
+                      class="donate-supporters__item-avatar"
+                      aria-hidden="true"
+                    >
                       {{#if supporter.avatar_template}}
                         {{htmlSafe
                           (renderAvatar

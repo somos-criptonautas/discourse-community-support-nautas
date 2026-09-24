@@ -97,12 +97,18 @@ export default class DonateContent extends Component {
   <template>
     <div class={{this.rootClasses}}>
       {{#if this.showSupportBar}}
-        <DonateSupportBar @layout={{this.args.supportBarLayout}} />
+        <DonateSupportBar @layout={{@supportBarLayout}} />
       {{/if}}
 
       <section class="donate-modal__hero">
-        <div class="donate-modal__hero-glow donate-modal__hero-glow--one" aria-hidden="true"></div>
-        <div class="donate-modal__hero-glow donate-modal__hero-glow--two" aria-hidden="true"></div>
+        <div
+          class="donate-modal__hero-glow donate-modal__hero-glow--one"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="donate-modal__hero-glow donate-modal__hero-glow--two"
+          aria-hidden="true"
+        ></div>
 
         <div class="donate-modal__hero-icon" aria-hidden="true">
           {{icon "heart"}}
@@ -113,7 +119,9 @@ export default class DonateContent extends Component {
             <span>{{i18n (themePrefix "hero.eyebrow")}}</span>
           </div>
           <h2>{{i18n (themePrefix "hero.title")}}</h2>
-          <p>{{trustHTML (i18n (themePrefix "main_heading_content.description"))}}</p>
+          <p>{{trustHTML
+              (i18n (themePrefix "main_heading_content.description"))
+            }}</p>
         </div>
 
         {{#if this.supportHighlights.length}}
@@ -130,9 +138,14 @@ export default class DonateContent extends Component {
 
       <div class="donate-modal__inner">
         {{#if this.featuredMethod}}
-          <section class="donate-modal__featured" aria-labelledby="donate-featured-title">
+          <section
+            class="donate-modal__featured"
+            aria-labelledby="donate-featured-title"
+          >
             <div class="donate-modal__section-intro">
-              <span class="donate-modal__section-kicker">{{i18n (themePrefix "featured.kicker")}}</span>
+              <span class="donate-modal__section-kicker">{{i18n
+                  (themePrefix "featured.kicker")
+                }}</span>
               <h3 id="donate-featured-title">{{this.featuredMethod.name}}</h3>
               <p>{{this.featuredMethod.description}}</p>
             </div>
@@ -148,18 +161,26 @@ export default class DonateContent extends Component {
               @provider={{this.featuredMethod.provider}}
               @copyLabel={{this.featuredMethod.copy_label}}
               @copyValue={{this.featuredMethod.copy_value}}
+              @useBtcpay={{this.featuredMethod.use_btcpay}}
             />
           </section>
         {{/if}}
 
         {{#if this.otherDonationMethods.length}}
-          <section class="donate-modal__methods" aria-labelledby="donate-methods-title">
+          <section
+            class="donate-modal__methods"
+            aria-labelledby="donate-methods-title"
+          >
             <div class="donate-modal__methods-heading">
               <div>
                 <span>{{i18n (themePrefix "methods.kicker")}}</span>
-                <h3 id="donate-methods-title">{{i18n (themePrefix "methods.title")}}</h3>
+                <h3 id="donate-methods-title">{{i18n
+                    (themePrefix "methods.title")
+                  }}</h3>
               </div>
-              <span class="donate-modal__methods-count">{{this.otherDonationMethods.length}}</span>
+              <span
+                class="donate-modal__methods-count"
+              >{{this.otherDonationMethods.length}}</span>
             </div>
 
             <div class="donate-modal__grid">
@@ -174,6 +195,7 @@ export default class DonateContent extends Component {
                   @provider={{method.provider}}
                   @copyLabel={{method.copy_label}}
                   @copyValue={{method.copy_value}}
+                  @useBtcpay={{method.use_btcpay}}
                 />
               {{/each}}
             </div>

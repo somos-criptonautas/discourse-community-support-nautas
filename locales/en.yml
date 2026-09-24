@@ -5,6 +5,11 @@ en:
     highlights_label: "Why support"
   featured:
     kicker: "Featured support option"
+  btcpay:
+    amount_label: "Donation amount"
+    amount_placeholder: "Amount"
+    creating: "Creating invoice…"
+    login_to_donate: "Log in to donate"
   copied_value: "Value copied"
   no_copied_value: "Copying failed"
   methods:
@@ -54,7 +59,7 @@ en:
       support_bar_in_outlets: "Show the support bar in plugin outlet widgets"
       support_bar_in_embeds: "Show the support bar in generic HTML embeds"
       support_goal: "Support goal amount. Set to 0 to hide the progress bar"
-      support_current: "Current supported amount"
+      support_current: "Current supported amount. Used only as a fallback: when the BTCPay subscriptions plugin is installed, the live donation total replaces it"
       support_currency: "Currency code displayed next to support amounts, for example EUR or USD"
       support_label: "Optional custom label for the support goal"
       support_period: "Goal period"
@@ -96,6 +101,9 @@ en:
             button_text:
               label: "Button text"
               description: "Support button label"
+            use_btcpay:
+              label: "BTCPay donation"
+              description: "Take the donation on-site through the BTCPay subscriptions plugin instead of linking out. Shows an amount field and a donate button; the URL is ignored."
             url:
               label: "URL"
               description: "Full support URL"
