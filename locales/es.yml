@@ -1,7 +1,7 @@
 es:
   hero:
     eyebrow: "Apoyo de la comunidad"
-    title: "Ayuda a mantener nuestra comunidad"
+    title: "Sostener nuestra comunidad"
     highlights_label: "Por qué apoyar"
   featured:
     kicker: "Opción de apoyo destacada"
@@ -9,12 +9,12 @@ es:
     amount_label: "Importe de la donación"
     amount_placeholder: "Importe"
     creating: "Creando factura…"
-    login_to_donate: "Inicia sesión para donar"
+    login_to_donate: "Iniciar sesión para donar"
   copied_value: "Valor copiado"
   no_copied_value: "No se pudo copiar"
   methods:
     kicker: "Opciones disponibles"
-    title: "Apoya de la forma que mejor te funcione"
+    title: "Formas de apoyar"
   footer:
     thanks: "Gracias por apoyar a la comunidad."
   support_bar:
@@ -28,7 +28,7 @@ es:
     period_monthly: "Mensual"
     period_yearly: "Anual"
   main_heading_content:
-    title: "Apoya a la comunidad"
+    title: "Apoyar a la comunidad"
     description: "Los proyectos financiados por la comunidad dependen de quienes los encuentran útiles. Cada aportación ayuda con el alojamiento, el desarrollo y el mantenimiento."
   supporters:
     label: "Nuestros colaboradores"
@@ -39,10 +39,10 @@ es:
       other: "+%{count} colaboradores más"
   theme_metadata:
     settings:
-      show_for_members: "Mostrar el activador de donaciones a los usuarios identificados"
-      show_for_anon: "Mostrar el activador de donaciones a los usuarios anónimos"
+      show_for_members: "Mostrar el activador de donaciones a quienes tienen sesión iniciada"
+      show_for_anon: "Mostrar el activador de donaciones a las visitas anónimas"
       display_on_homepage: "Mostrar el activador de donaciones en la portada configurada"
-      url_must_contain: "Mostrar el activador de donaciones en las rutas que coincidan. Añade <code>*</code> al final como comodín"
+      url_must_contain: "Mostrar el activador de donaciones en las rutas que coincidan. Con <code>*</code> al final como comodín"
       trust_level: "Nivel de confianza mínimo para mostrar el activador de donaciones"
       auto_open_modal: "Abrir automáticamente el modal de apoyo mientras no se haya descartado"
       auto_open_delay: "Espera antes de abrir automáticamente el modal de apoyo"
@@ -51,14 +51,14 @@ es:
       excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"
       design: "Diseño visual que usa la interfaz de apoyo"
       default_post_view: "Disposición por defecto de los bloques de apoyo insertados"
-      enable_post_embed: "Activar [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] y [wrap=donate-progress] en las publicaciones"
+      enable_post_embed: "Activar [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] y [wrap=donate-progress] en las respuestas"
       support_bar_enabled: "Activar la barra de progreso de apoyo"
       support_bar_layout: "Disposición de la barra de apoyo"
       support_bar_in_modal: "Mostrar la barra de apoyo en el modal"
-      support_bar_in_posts: "Mostrar la barra de apoyo en los embeds de publicaciones"
+      support_bar_in_posts: "Mostrar la barra de apoyo en los embeds de respuestas"
       support_bar_in_outlets: "Mostrar la barra de apoyo en los widgets de plugin outlet"
       support_bar_in_embeds: "Mostrar la barra de apoyo en los embeds HTML genéricos"
-      support_goal: "Importe objetivo de apoyo. Ponlo a 0 para ocultar la barra de progreso"
+      support_goal: "Importe objetivo de apoyo. 0 oculta la barra de progreso"
       support_current: "Importe recaudado actual. Solo se usa como respaldo: con el plugin de suscripciones BTCPay instalado, el total real de donaciones lo sustituye"
       support_currency: "Código de moneda que se muestra junto a los importes, por ejemplo EUR o USD"
       support_label: "Etiqueta personalizada opcional para el objetivo de apoyo"
@@ -72,21 +72,21 @@ es:
       supporter_avatar_count: "Número de avatares de colaboradores visibles en la propia barra"
       show_supporter_amounts: "Mostrar los importes aportados en la lista de colaboradores"
       supporters:
-        description: "Añade colaboradores a mano. El nombre de usuario resuelve automáticamente al perfil público de Discourse y a su avatar."
+        description: "Colaboraciones a mano. El nombre de usuario resuelve automáticamente al perfil público de Discourse y a su avatar."
         schema:
           properties:
             username:
               label: "Nombre de usuario"
-              description: "Nombre de usuario del colaborador en Discourse"
+              description: "Nombre de usuario en el foro"
             amount:
               label: "Importe"
               description: "Importe aportado, opcional"
             currency:
               label: "Moneda"
               description: "Código de moneda opcional, por ejemplo EUR o USD"
-      supporter_groups: "Incorpora colaboradores automáticamente desde uno o varios grupos, ordenados por fecha de entrada al grupo, del más reciente al más antiguo. Complementa —no sustituye— la lista manual de arriba."
+      supporter_groups: "Suma colaboraciones automáticamente desde uno o varios grupos, por fecha de entrada, de la más reciente a la más antigua. Complementa la lista manual de arriba, no la reemplaza."
       donation_methods:
-        description: "Añade, edita, reordena y configura los métodos de apoyo disponibles"
+        description: "Métodos de apoyo disponibles: agregar, editar, ordenar y configurar"
         schema:
           properties:
             featured:
@@ -141,7 +141,7 @@ es:
                   provider:
                     label: "Proveedor"
       support_highlights:
-        description: "Destacados que aparecen en la cabecera del modal de apoyo. Añade uno o más elementos y traduce cada uno si quieres."
+        description: "Destacados de la cabecera del modal de apoyo, con traducción opcional por idioma."
         schema:
           properties:
             text:
