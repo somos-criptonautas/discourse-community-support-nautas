@@ -205,4 +205,6 @@ bin/rake "themes:qunit[name,Community Support]"
 
 ## License
 
-MIT
+GPL-3.0. See [LICENSE](LICENSE).
+
+Text of this README under [CC BY-NC-SA 4.0](CC-BY-NC-SA-4.0.txt).
