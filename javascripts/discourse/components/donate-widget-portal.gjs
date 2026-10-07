@@ -1,10 +1,18 @@
 import Component from "@glimmer/component";
+import { bind } from "discourse/lib/decorators";
 import { service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 import DonatePost from "./donate-post";
+import { shouldRenderAutomatically } from "../lib/visibility";
 
 const SELECTOR = '[data-donation-widget="support"]';
-const VALID_VIEWS = new Set(["full", "compact", "minimal", "progress"]);
+const VALID_VIEWS = new Set([
+  "full",
+  "compact",
+  "minimal",
+  "progress",
+  "sidebar",
+]);
 const VALID_DESIGNS = new Set(["classic", "minimal", "modern"]);
 
 function resolveView(value) {
@@ -17,6 +25,7 @@ function resolveDesign(value) {
 
 export default class DonateWidgetPortal extends Component {
   @service currentUser;
+  @service router;
   @tracked entries = [];
 
   observer = null;
@@ -27,13 +36,17 @@ export default class DonateWidgetPortal extends Component {
     this.scan();
     this.observer = new MutationObserver(() => this.scheduleScan());
     this.observer.observe(document.body, { childList: true, subtree: true });
+    // The route gate is part of scan(), so a navigation has to re-run it.
+    this.router.on("routeDidChange", this.scheduleScan);
   }
 
   willDestroy() {
     super.willDestroy(...arguments);
     this.observer?.disconnect();
+    this.router.off("routeDidChange", this.scheduleScan);
   }
 
+  @bind
   scheduleScan() {
     if (this.scanScheduled) {
       return;
@@ -45,24 +58,11 @@ export default class DonateWidgetPortal extends Component {
     });
   }
 
-  get isExcludedGroupMember() {
-    const currentUser = this.currentUser;
-    if (!currentUser || !settings.excluded_groups) {
-      return false;
-    }
-
-    const excludedGroupIds = settings.excluded_groups
-      .split("|")
-      .map((id) => parseInt(id, 10));
-
-    return currentUser.visibleGroups?.some((group) =>
-      excludedGroupIds.includes(group.id)
-    );
-  }
-
   scan() {
-    if (this.isExcludedGroupMember) {
-      this.entries = [];
+    if (!shouldRenderAutomatically(this.router, this.currentUser)) {
+      if (this.entries.length) {
+        this.entries = [];
+      }
       return;
     }
 

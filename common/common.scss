@@ -64,7 +64,7 @@
     position: relative;
     isolation: isolate;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, auto);
     align-items: flex-start;
     gap: 0.8rem 1rem;
     min-height: 220px;
@@ -200,15 +200,6 @@
     min-width: 0;
   }
 
-  .donate-modal__eyebrow {
-    margin-bottom: 0.3rem;
-    color: var(--secondary);
-    font-size: var(--font-down-1);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.075em;
-  }
-
   .donate-modal__hero-copy h2 {
     margin: 0 0 0.4rem;
     color: var(--secondary);
@@ -254,132 +245,71 @@
   // -----------------------------------------------------------------------
   // Clean content area
   // -----------------------------------------------------------------------
+  // -----------------------------------------------------------------------
+  // Action column inside the box: the featured method's amount field and
+  // button. It sits on the tertiary background, so the controls are restyled
+  // light-on-dark rather than inheriting the card treatment.
+  // -----------------------------------------------------------------------
+  .donate-modal__hero-action {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+    min-width: min(14rem, 100%);
+    gap: 0.5rem;
+  }
+
+  .donate-modal__hero-action .donate-option-card__amount input {
+    border-color: rgb(var(--secondary-rgb), 0.35);
+    background: rgb(var(--secondary-rgb), 0.14);
+    color: var(--secondary);
+  }
+
+  .donate-modal__hero-action .donate-option-card__amount input::placeholder {
+    color: rgb(var(--secondary-rgb), 0.65);
+  }
+
+  .donate-modal__hero-action .donate-option-card__amount input:focus-visible {
+    border-color: var(--secondary);
+    background: rgb(var(--secondary-rgb), 0.2);
+  }
+
+  .donate-modal__hero-action .donate-option-card__amount-currency {
+    color: rgb(var(--secondary-rgb), 0.7);
+  }
+
+  .donate-modal__hero-action .btn-primary {
+    justify-content: center;
+    border: 1px solid transparent;
+    background: var(--secondary);
+    color: var(--tertiary);
+    font-weight: 700;
+  }
+
+  .donate-modal__hero-action .btn-primary:hover,
+  .donate-modal__hero-action .btn-primary:focus-visible {
+    background: rgb(var(--secondary-rgb), 0.88);
+    color: var(--tertiary);
+  }
+
+  .donate-modal__hero-action .donate-option-card__copy {
+    border-color: rgb(var(--secondary-rgb), 0.3);
+    background: rgb(var(--secondary-rgb), 0.12);
+    color: var(--secondary);
+  }
+
+  .donate-modal__hero-action .donate-option-card__copy-label,
+  .donate-modal__hero-action .donate-option-card__copy-value {
+    color: var(--secondary);
+  }
+
+  .donate-modal__hero-action .donate-option-card__error {
+    color: var(--secondary);
+  }
+
   .donate-modal__inner {
     margin: 0 auto;
     padding: clamp(1.25rem, 3vw, 1.8rem) clamp(1.1rem, 3vw, 1.8rem) 1.35rem;
-  }
-
-  .donate-modal__featured {
-    padding: 0 0 1.45rem;
-    border-bottom: 1px solid var(--donate-line);
-  }
-
-  .donate-modal__section-intro {
-    margin-bottom: 0.9rem;
-  }
-
-  .donate-modal__section-kicker,
-  .donate-modal__methods-heading > div > span {
-    display: block;
-    margin-bottom: 0.2rem;
-    color: var(--donate-muted);
-    font-size: var(--font-down-2);
-    font-weight: 750;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-  }
-
-  .donate-modal__section-intro h3,
-  .donate-modal__methods-heading h3 {
-    margin: 0;
-    color: var(--primary);
-    font-size: var(--font-up-2);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
-
-  .donate-modal__section-intro p {
-    max-width: 62ch;
-    margin: 0.25rem 0 0;
-    color: var(--donate-muted);
-    line-height: 1.45;
-  }
-
-  .donate-option-card.--featured {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-    align-items: center;
-    gap: 1rem;
-    padding: 0.9rem;
-    border: 1px solid rgb(var(--primary-rgb), 0.1);
-    border-radius: 1rem;
-    background: rgb(var(--primary-rgb), 0.045);
-  }
-
-  .donate-option-card.--featured:hover {
-    border-color: rgb(var(--primary-rgb), 0.16);
-    background: rgb(var(--primary-rgb), 0.06);
-  }
-
-  .donate-option-card.--featured .donate-option-card__top {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  .donate-option-card.--featured .donate-option-card__icon {
-    flex: 0 0 2.7rem;
-    width: 2.7rem;
-    height: 2.7rem;
-    border-radius: 0.8rem;
-    background: var(--secondary);
-    color: var(--tertiary);
-    box-shadow: 0 8px 22px -18px rgb(var(--always-black-rgb), 0.5);
-  }
-
-  .donate-option-card.--featured .donate-option-card__identity {
-    display: flex;
-    min-width: 0;
-    overflow: hidden;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .donate-option-card.--featured .donate-option-card__identity strong {
-    color: var(--primary);
-    font-size: var(--font-0);
-    line-height: 1.2;
-  }
-
-  .donate-option-card.--featured .donate-option-card__identity span {
-    color: var(--donate-muted);
-    font-size: var(--font-down-1);
-  }
-
-  .donate-option-card.--featured .donate-option-card__content {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    min-width: 0;
-    gap: 0.75rem;
-  }
-
-  .donate-modal__methods {
-    padding-top: 1.45rem;
-  }
-
-  .donate-modal__methods-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.85rem;
-  }
-
-  .donate-modal__methods-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 1.9rem;
-    height: 1.9rem;
-    border-radius: 50%;
-    background: rgb(var(--primary-rgb), 0.06);
-    color: var(--donate-muted);
-    font-size: var(--font-down-1);
-    font-weight: 750;
   }
 
   .donate-modal__grid {
@@ -455,10 +385,6 @@
     margin-top: 0;
   }
 
-  .donate-option-card:not(.--featured) .donate-option-card__identity {
-    display: none;
-  }
-
   .donate-option-card__content {
     grid-column: 2;
     min-width: 0;
@@ -519,16 +445,6 @@
     color: var(--success);
   }
 
-  .donate-option-card.--featured .donate-option-card__copy {
-    width: auto;
-    min-width: min(15rem, 100%);
-    max-width: 100%;
-    min-height: 3.1rem;
-    margin: 0;
-    padding: 0.65rem 0.75rem 0.65rem 1rem;
-    border-radius: 0.85rem;
-  }
-
   .donate-option-card__copy-content {
     display: flex;
     min-width: 0;
@@ -557,10 +473,6 @@
     white-space: nowrap;
   }
 
-  .donate-option-card.--featured .donate-option-card__copy-value {
-    font-size: var(--font-0);
-  }
-
   .donate-option-card__copy-icon {
     display: flex;
     flex: 0 0 1.9rem;
@@ -583,13 +495,6 @@
   .donate-option-card__copy.--copied .donate-option-card__copy-icon {
     background: var(--success);
     color: var(--secondary);
-  }
-
-  .donate-option-card.--featured .donate-option-card__copy-icon {
-    flex: 0 0 2rem;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.6rem;
   }
 
   .donate-option-card__content a.btn-primary {
@@ -647,6 +552,15 @@
     pointer-events: none;
   }
 
+  .donate-option-card__btcpay.--stacked {
+    flex-direction: column;
+    align-items: stretch;
+
+    .btn-primary {
+      width: 100%;
+    }
+  }
+
   .donate-option-card__error {
     margin: 0.4rem 0 0;
     color: var(--danger);
@@ -660,20 +574,6 @@
       .btn-primary {
         width: 100%;
       }
-    }
-  }
-
-  .donate-modal__closing {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding-top: 1.3rem;
-    color: var(--donate-muted);
-    font-size: var(--font-down-1);
-
-    .d-icon {
-      color: var(--love);
     }
   }
 
@@ -695,39 +595,16 @@
     }
 
     .donate-modal__hero-pills {
-      grid-column: 1 / -1;
       margin-top: 0.15rem;
+    }
+
+    .donate-modal__hero-action {
+      grid-column: 1 / -1;
+      min-width: 0;
     }
 
     .donate-modal__grid {
       grid-template-columns: 1fr;
-    }
-
-    .donate-option-card.--featured {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.8rem;
-    }
-
-    .donate-option-card.--featured .donate-option-card__top,
-    .donate-option-card.--featured .donate-option-card__content {
-      width: 100%;
-    }
-
-    .donate-option-card.--featured .donate-option-card__content {
-      justify-content: flex-start;
-    }
-
-    .donate-option-card.--featured .donate-option-card__copy {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-    }
-
-    .donate-modal__methods-count {
-      width: 1.75rem;
-      height: 1.75rem;
     }
   }
 
@@ -871,40 +748,53 @@
     background: var(--secondary);
   }
 
-  .donate-support-bar__heading,
-  .donate-support-bar__totals {
+  // Raised total, what it is measured against and the percentage all sit on
+  // one line, so the figures are read together instead of at opposite edges.
+  .donate-support-bar__summary {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
   }
 
-  .donate-support-bar__heading {
-    margin-bottom: 0.5rem;
+  .donate-support-bar__figures {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem;
   }
 
-  .donate-support-bar__label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+  .donate-support-bar__figures strong {
     color: var(--primary);
-    font-size: var(--font-down-1);
-    font-weight: 700;
+    font-size: var(--font-up-1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
 
-  .donate-support-bar__label .d-icon {
-    color: var(--love);
+  .donate-support-bar__figures > span {
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
   }
 
-  .donate-support-bar__heading > strong {
-    font-size: var(--font-down-1);
+  .donate-support-bar__percentage {
+    flex: 0 0 auto;
+    color: var(--tertiary);
+    font-size: var(--font-up-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .donate-support-bar.--goal-reached .donate-support-bar__percentage,
+  .donate-support-bar.--goal-exceeded .donate-support-bar__percentage {
+    color: var(--success);
   }
 
   .donate-supporters {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    margin: -0.1rem 0 0.5rem;
+    margin: 0.55rem 0 0;
   }
 
   .donate-supporters__avatars {
@@ -1019,17 +909,6 @@
   .donate-support-bar__fill.--fill-success {
     background: var(--success);
   }
-
-  .donate-support-bar__totals {
-    margin-top: 0.45rem;
-    color: var(--donate-muted);
-    font-size: var(--font-down-2);
-  }
-
-  .donate-support-bar__totals strong {
-    color: var(--primary);
-    font-size: var(--font-down-1);
-  }
 }
 
 // -------------------------------------------------------------------------//
@@ -1083,7 +962,6 @@
       font-size: 1.1rem;
     }
 
-    .donate-modal__eyebrow,
     .donate-modal__hero-copy p {
       display: none;
     }
@@ -1099,28 +977,12 @@
       padding: 0.9rem;
     }
 
-    .donate-modal__featured {
-      padding-bottom: 0.9rem;
-      border-bottom: 1px solid var(--primary-low);
-    }
-
-    .donate-modal__section-intro,
-    .donate-modal__methods-heading,
-    .donate-modal__closing {
-      display: none;
-    }
-
-    .donate-modal__methods {
-      padding-top: 0.9rem;
-    }
-
     .donate-modal__grid {
       grid-template-columns: 1fr;
       gap: 0.5rem;
     }
 
-    .donate-option-card,
-    .donate-option-card.--featured {
+    .donate-option-card {
       display: grid;
       grid-template-columns: 2.5rem minmax(0, 1fr);
       gap: 0.75rem;
@@ -1131,21 +993,11 @@
       transform: none;
     }
 
-    .donate-option-card.--featured {
-      border-color: var(--primary-low-mid);
-      background: rgb(var(--primary-rgb), 0.025);
-    }
-
     .donate-option-card__top {
       display: contents;
     }
 
-    .donate-option-card.--featured .donate-option-card__top {
-      display: contents;
-    }
-
-    .donate-option-card__icon,
-    .donate-option-card.--featured .donate-option-card__icon {
+    .donate-option-card__icon {
       width: 2.5rem;
       height: 2.5rem;
       border-radius: 0.65rem;
@@ -1167,8 +1019,7 @@
       font-size: var(--font-down-1);
     }
 
-    .donate-option-card__copy,
-    .donate-option-card.--featured .donate-option-card__copy {
+    .donate-option-card__copy {
       min-height: 2.45rem;
       margin-bottom: 0.4rem;
       padding: 0.45rem 0.55rem 0.45rem 0.65rem;
@@ -1176,8 +1027,7 @@
       box-shadow: none;
     }
 
-    .donate-option-card__copy-icon,
-    .donate-option-card.--featured .donate-option-card__copy-icon {
+    .donate-option-card__copy-icon {
       width: 1.7rem;
       height: 1.7rem;
       flex-basis: 1.7rem;
@@ -1282,45 +1132,18 @@
     .donate-option-card {
       padding: 0.7rem;
     }
-
-    .donate-modal__section-intro,
-    .donate-modal__closing {
-      display: none;
-    }
-
-    .donate-modal__featured {
-      padding-bottom: 1rem;
-    }
-
-    .donate-modal__methods {
-      padding-top: 1rem;
-    }
   }
 
   // -----------------------------------------------------------------------
   // View: Minimal
   // -----------------------------------------------------------------------
   &.--view-minimal {
-    .donate-modal__hero,
-    .donate-modal__closing,
-    .donate-modal__section-intro,
-    .donate-modal__methods-heading {
+    .donate-modal__hero {
       display: none;
     }
 
     .donate-modal__inner {
       padding: 0.8rem;
-    }
-
-    .donate-modal__featured,
-    .donate-modal__methods {
-      padding-top: 0;
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
-
-    .donate-modal__methods {
-      margin-top: 0.5rem;
     }
 
     .donate-modal__grid {
@@ -1334,9 +1157,6 @@
   // -----------------------------------------------------------------------
   &.--view-progress {
     .donate-modal__hero,
-    .donate-modal__featured,
-    .donate-modal__methods,
-    .donate-modal__closing,
     .donate-modal__close {
       display: none;
     }
@@ -1360,50 +1180,111 @@
     overflow: hidden;
   }
 
-  .donate-support-bar.--layout-stacked {
-    .donate-support-bar__heading,
-    .donate-support-bar__totals {
-      align-items: flex-start;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .donate-support-bar__heading {
-      margin-bottom: 0.65rem;
-    }
-
-    .donate-support-bar__totals {
-      margin-top: 0.55rem;
-    }
-  }
-
   .donate-support-bar.--layout-compact {
     padding: 0.65rem 0.8rem;
-
-    .donate-support-bar__heading {
-      margin-bottom: 0.35rem;
-    }
 
     .donate-support-bar__track {
       height: 0.4rem;
     }
-
-    .donate-support-bar__totals {
-      margin-top: 0.35rem;
-    }
-  }
-
-  .donate-support-bar.--goal-reached,
-  .donate-support-bar.--goal-exceeded {
-    .donate-support-bar__label .d-icon,
-    .donate-support-bar__totals strong {
-      color: var(--success);
-    }
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .donate-support-bar__row {
-    transition: none;
+// -------------------------------------------------------------------------//
+//  Sidebar block — a purpose-built compact variant, not the full box shrunk
+//  down. Icon + short title, the slim bar, then the amount field and button
+//  stacked. No hero copy and no method grid: there is no room for either.
+// -------------------------------------------------------------------------//
+.donate-component.--view-sidebar {
+  --donate-muted: var(--primary-medium);
+
+  .donate-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem 0.9rem 0.9rem;
+    border: 1px solid var(--primary-low);
+    border-radius: 0.8rem;
+    background: var(--secondary);
+  }
+
+  .donate-sidebar__head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    color: var(--primary);
+    font-size: var(--font-down-1);
+  }
+
+  .donate-sidebar__head strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .donate-sidebar__icon {
+    display: flex;
+    flex: 0 0 1.6rem;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 0.5rem;
+    background: rgb(var(--tertiary-rgb), 0.12);
+    color: var(--tertiary);
+  }
+
+  .donate-sidebar__icon .d-icon {
+    font-size: 0.9rem;
+  }
+
+  // The bar is already inside a bordered block, so it drops its own chrome.
+  .donate-support-bar {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .donate-support-bar__summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .donate-support-bar__figures strong,
+  .donate-support-bar__percentage {
+    font-size: var(--font-0);
+  }
+
+  .donate-support-bar__track {
+    height: 0.4rem;
+  }
+
+  .donate-option-card__btcpay {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+    margin: 0;
+
+    .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .donate-option-card__amount input {
+    height: 2.2rem;
+  }
+
+  .donate-option-card__copy {
+    margin: 0;
+    min-height: 2.4rem;
+  }
+
+  .donate-option-card__error {
+    margin: 0;
   }
 }

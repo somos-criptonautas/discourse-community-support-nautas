@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import { trustHTML } from "@ember/template";
 import icon from "discourse/helpers/d-icon";
 import { i18n } from "discourse-i18n";
+import DonateMethodAction from "./donate-method-action";
 import DonateOptionCard from "./donate-option-card";
 import DonateSupportBar from "./donate-support-bar";
 
@@ -14,12 +15,24 @@ export default class DonateContent extends Component {
     return this.args.view || "full";
   }
 
+  get isSidebar() {
+    return this.view === "sidebar";
+  }
+
   get design() {
     return this.args.design || settings.design || "classic";
   }
 
   get showSupportBar() {
     return settings.support_bar_enabled && (this.args.showSupportBar ?? true);
+  }
+
+  get supportIcon() {
+    return settings.support_icon || "heart";
+  }
+
+  get sidebarTitle() {
+    return settings.support_label || i18n(themePrefix("sidebar.title"));
   }
 
   localizeMethod(method) {
@@ -76,6 +89,7 @@ export default class DonateContent extends Component {
     );
   }
 
+  // The method whose amount field and button sit inside the box itself.
   get featuredMethod() {
     return this.donationMethods.find((method) => method.featured) || null;
   }
@@ -96,93 +110,88 @@ export default class DonateContent extends Component {
 
   <template>
     <div class={{this.rootClasses}}>
-      {{#if this.showSupportBar}}
-        <DonateSupportBar @layout={{@supportBarLayout}} />
-      {{/if}}
-
-      <section class="donate-modal__hero">
-        <div
-          class="donate-modal__hero-glow donate-modal__hero-glow--one"
-          aria-hidden="true"
-        ></div>
-        <div
-          class="donate-modal__hero-glow donate-modal__hero-glow--two"
-          aria-hidden="true"
-        ></div>
-
-        <div class="donate-modal__hero-icon" aria-hidden="true">
-          {{icon "heart"}}
-        </div>
-
-        <div class="donate-modal__hero-copy">
-          <div class="donate-modal__eyebrow">
-            <span>{{i18n (themePrefix "hero.eyebrow")}}</span>
+      {{#if this.isSidebar}}
+        <section
+          class="donate-sidebar"
+          aria-label={{i18n (themePrefix "support_bar.aria_label")}}
+        >
+          <div class="donate-sidebar__head">
+            <span class="donate-sidebar__icon" aria-hidden="true">{{icon
+                this.supportIcon
+              }}</span>
+            <strong>{{this.sidebarTitle}}</strong>
           </div>
-          <h2>{{i18n (themePrefix "hero.title")}}</h2>
-          <p>{{trustHTML
-              (i18n (themePrefix "main_heading_content.description"))
-            }}</p>
-        </div>
 
-        {{#if this.supportHighlights.length}}
-          <div
-            class="donate-modal__hero-pills"
-            aria-label={{i18n (themePrefix "hero.highlights_label")}}
-          >
-            {{#each this.supportHighlights as |highlight|}}
-              <span>{{icon highlight.icon}} {{highlight.text}}</span>
-            {{/each}}
-          </div>
-        {{/if}}
-      </section>
+          {{#if this.showSupportBar}}
+            <DonateSupportBar @layout="compact" />
+          {{/if}}
 
-      <div class="donate-modal__inner">
-        {{#if this.featuredMethod}}
-          <section
-            class="donate-modal__featured"
-            aria-labelledby="donate-featured-title"
-          >
-            <div class="donate-modal__section-intro">
-              <span class="donate-modal__section-kicker">{{i18n
-                  (themePrefix "featured.kicker")
-                }}</span>
-              <h3 id="donate-featured-title">{{this.featuredMethod.name}}</h3>
-              <p>{{this.featuredMethod.description}}</p>
-            </div>
-
-            <DonateOptionCard
-              @featured={{true}}
-              @name={{this.featuredMethod.name}}
-              @description={{this.featuredMethod.description}}
+          {{#if this.featuredMethod}}
+            <DonateMethodAction
               @buttonText={{this.featuredMethod.button_text}}
               @url={{this.featuredMethod.url}}
-              @icon={{this.featuredMethod.icon}}
-              @owner={{this.featuredMethod.owner}}
-              @provider={{this.featuredMethod.provider}}
               @copyLabel={{this.featuredMethod.copy_label}}
               @copyValue={{this.featuredMethod.copy_value}}
               @useBtcpay={{this.featuredMethod.use_btcpay}}
+              @stacked={{true}}
             />
-          </section>
+          {{/if}}
+        </section>
+      {{else}}
+        {{! The box is the hero and the featured method in one: copy on the
+            left, the amount field and button on the right. }}
+        <section class="donate-modal__hero">
+          <div
+            class="donate-modal__hero-glow donate-modal__hero-glow--one"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="donate-modal__hero-glow donate-modal__hero-glow--two"
+            aria-hidden="true"
+          ></div>
+
+          <div class="donate-modal__hero-icon" aria-hidden="true">
+            {{icon this.supportIcon}}
+          </div>
+
+          <div class="donate-modal__hero-copy">
+            <h2>{{i18n (themePrefix "hero.title")}}</h2>
+            <p>{{trustHTML
+                (i18n (themePrefix "main_heading_content.description"))
+              }}</p>
+
+            {{#if this.supportHighlights.length}}
+              <div
+                class="donate-modal__hero-pills"
+                aria-label={{i18n (themePrefix "hero.highlights_label")}}
+              >
+                {{#each this.supportHighlights as |highlight|}}
+                  <span>{{icon highlight.icon}} {{highlight.text}}</span>
+                {{/each}}
+              </div>
+            {{/if}}
+          </div>
+
+          {{#if this.featuredMethod}}
+            <div class="donate-modal__hero-action">
+              <DonateMethodAction
+                @buttonText={{this.featuredMethod.button_text}}
+                @url={{this.featuredMethod.url}}
+                @copyLabel={{this.featuredMethod.copy_label}}
+                @copyValue={{this.featuredMethod.copy_value}}
+                @useBtcpay={{this.featuredMethod.use_btcpay}}
+                @stacked={{true}}
+              />
+            </div>
+          {{/if}}
+        </section>
+
+        {{#if this.showSupportBar}}
+          <DonateSupportBar @layout={{@supportBarLayout}} />
         {{/if}}
 
         {{#if this.otherDonationMethods.length}}
-          <section
-            class="donate-modal__methods"
-            aria-labelledby="donate-methods-title"
-          >
-            <div class="donate-modal__methods-heading">
-              <div>
-                <span>{{i18n (themePrefix "methods.kicker")}}</span>
-                <h3 id="donate-methods-title">{{i18n
-                    (themePrefix "methods.title")
-                  }}</h3>
-              </div>
-              <span
-                class="donate-modal__methods-count"
-              >{{this.otherDonationMethods.length}}</span>
-            </div>
-
+          <div class="donate-modal__inner">
             <div class="donate-modal__grid">
               {{#each this.otherDonationMethods as |method|}}
                 <DonateOptionCard
@@ -199,14 +208,9 @@ export default class DonateContent extends Component {
                 />
               {{/each}}
             </div>
-          </section>
+          </div>
         {{/if}}
-
-        <div class="donate-modal__closing">
-          {{icon "heart"}}
-          <span>{{i18n (themePrefix "footer.thanks")}}</span>
-        </div>
-      </div>
+      {{/if}}
     </div>
   </template>
 }

@@ -25,6 +25,7 @@ Instálalo como componente y añádelo a los temas que deban mostrarlo.
 - Control de visibilidad por miembros/anónimos, nivel de confianza, rutas y grupos excluidos
 - Los grupos excluidos ocultan los widgets de outlet y los embeds genéricos, mientras que los bloques contextuales `[wrap=donate]` y el enlace `#donate` siguen disponibles
 - Métodos de donación con logotipos, enlaces y valores copiables (IBAN, alias, dirección…)
+- El campo de importe y el botón del método destacado van dentro de la propia caja de apoyo
 - Donaciones BTCPay dentro del sitio, con un campo de importe en lugar del enlace saliente
 - Traducciones por método usando la lista de idiomas de Discourse
 - Destacados configurables en la cabecera, con traducción por elemento desde la misma lista
@@ -32,7 +33,7 @@ Instálalo como componente y añádelo a los temas que deban mostrarlo.
 - Periodos de objetivo único, mensual y anual
 - Avatares de colaboradores, desde una lista manual, desde grupos y desde donantes reales de BTCPay
 - Diseños Classic, Minimal y Modern
-- Vistas Full, Compact, Minimal y Progress
+- Vistas Full, Compact, Minimal, Progress y Sidebar
 - Envoltorios en publicaciones con `[wrap=donate*]`
 - Embed HTML genérico para Discourse Ads y otras ubicaciones que admitan HTML
 - Renderizado configurable en plugin outlets mediante `renderInOutlet`
@@ -59,7 +60,7 @@ donation_methods:
 
 | Campo | Para qué sirve |
 | --- | --- |
-| `featured` | Promueve el método a la sección destacada |
+| `featured` | Usa este método para el campo de importe y el botón de la caja |
 | `name`, `description`, `button_text` | Texto de la tarjeta (obligatorio) |
 | `url` | URL de apoyo saliente. Se ignora cuando `use_btcpay` está activo |
 | `use_btcpay` | Cobra la donación en el sitio mediante el plugin de BTCPay |
@@ -99,9 +100,28 @@ Ambas vuelven a sus ajustes manuales si la petición falla o el plugin no está.
 
 El importe mínimo, la moneda de la donación y el límite de peticiones son ajustes del plugin, no de este componente.
 
+## Disposición
+
+La disposición por defecto es una caja, después la barra de progreso y después el resto de métodos:
+
+```
+┌─ caja de apoyo ────────────────────────────┐
+│ ♥  Sostener nuestra comunidad              │
+│    Los proyectos financiados…   [ 10.00  ] │
+│    [sin anuncios] [comunidad]   [  Donar ] │
+└────────────────────────────────────────────┘
+  120 EUR de 200 EUR · Mensual          60%
+  ▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+┌ PayPal ──────────┐ ┌ Transferencia ──────┐
+```
+
+La caja es la cabecera y el método destacado en una sola pieza: el texto a la izquierda y el campo de importe y el botón de ese método a la derecha. Los demás métodos siguen en la cuadrícula. El icono lo define `support_icon` y es el único icono de la disposición.
+
 ## Barra de apoyo
 
 La barra de apoyo se activa globalmente y puede mostrarse de forma independiente en el modal, los embeds en publicaciones, los plugin outlets y los embeds genéricos. Admite disposición inline, apilada y compacta.
+
+Las cifras se leen en una sola línea —total recaudado, contra qué se mide, el periodo y el porcentaje— para que nada quede separado a lo ancho de la barra. `support_label` se usa como nombre accesible de la barra, no como título visible.
 
 Por debajo del primer objetivo usa `tertiary-low` como pista y `tertiary` como relleno; al 100% exacto — y en cada hito exacto de 200%, 300%… — pista y relleno usan `success`. Entre hitos la pista usa `success-low` y el ciclo actual usa `success` como relleno, mientras el porcentaje mostrado sigue indicando el total real (por ejemplo 125% o 220%).
 
@@ -159,6 +179,8 @@ El HTML se mantiene estable mientras el componente es dueño de todo el marcado 
 
 Activa `outlet_enabled` e indica uno o más nombres de outlet en `outlet_locations`, separados por `|`. El componente renderiza mediante `api.renderInOutlet()`.
 
+Los widgets de outlet y los embeds genéricos respetan `url_must_contain`, `display_on_homepage`, `show_for_members`, `show_for_anon`, `trust_level` y `excluded_groups`, y se vuelven a comprobar en cada navegación. Los embeds en publicaciones se saltan esas comprobaciones a propósito: un bloque `[wrap=donate]` lo colocó ahí quien escribió la publicación.
+
 Ejemplos: `above-main-container`, `before-topic-list`, `after-topic-list`, `topic-list-bottom`, `below-site-header`, `main-outlet-bottom`, `before-main-outlet`. La disponibilidad exacta depende de la versión de Discourse y de los temas y componentes instalados.
 
 La vista y el diseño del outlet se configuran de forma independiente de los valores globales.
@@ -177,8 +199,13 @@ La vista controla cuánto contenido se muestra:
 - `compact` — menos adorno para ubicaciones estrechas
 - `minimal` — presentación centrada en los métodos
 - `progress` — solo objetivo y progreso
+- `sidebar` — un bloque compacto hecho a propósito para outlets de la barra lateral: icono, título corto, barra fina, campo de importe y botón. No es la caja completa reducida: prescinde del texto de cabecera y de la cuadrícula de métodos porque no caben.
 
 Diseño y vista son ortogonales a propósito: cualquier vista funciona con cualquier diseño.
+
+## Iconos
+
+`support_icon` define el único icono de la disposición: la caja, el bloque de la barra lateral y el icono de reserva cuando un método no tiene logotipo subido. Por defecto es `ph-dt-hand-heart`, que requiere el [componente de iconos Phosphor Duotone](https://github.com/somos-criptonautas/discourse-phosphor-duotone-icons-nautas) instalado; usa `heart` o cualquier otro icono del núcleo si no usas ese componente.
 
 ## Idiomas
 

@@ -25,6 +25,7 @@ Install it as a component and add it to the themes that should show it.
 - Visibility controls for members/anonymous users, trust level, routes and excluded groups
 - Excluded groups hide plugin outlet widgets and generic embeds, while contextual `[wrap=donate]` blocks and the `#donate` link remain available
 - Donation methods with logos, links and copyable values (IBAN, handle, address…)
+- The featured method's amount field and button sit inside the support box itself
 - On-site BTCPay donations, with an amount field in place of the outbound link
 - Per-method translations using the Discourse locale list
 - Configurable hero highlights, with per-item translations from the same locale list
@@ -32,7 +33,7 @@ Install it as a component and add it to the themes that should show it.
 - One-time, monthly and yearly goal periods
 - Supporter avatars, from a manual list, from groups, and from real BTCPay donors
 - Classic, Minimal and Modern designs
-- Full, Compact, Minimal and Progress presentation views
+- Full, Compact, Minimal, Progress and Sidebar presentation views
 - Post wrappers via `[wrap=donate*]`
 - Generic HTML embed for Discourse Ads and other HTML-capable placements
 - Configurable plugin outlet rendering through `renderInOutlet`
@@ -59,7 +60,7 @@ donation_methods:
 
 | Field | Purpose |
 | --- | --- |
-| `featured` | Promote this method to the featured section |
+| `featured` | Use this method for the amount field and button inside the box |
 | `name`, `description`, `button_text` | Card copy (required) |
 | `url` | Outbound support URL. Ignored when `use_btcpay` is on |
 | `use_btcpay` | Take the donation on-site through the BTCPay plugin |
@@ -99,9 +100,28 @@ Both fall back to their manual settings when the request fails or the plugin is 
 
 The minimum donation amount, the donation currency and the rate limit are the plugin's site settings, not this component's.
 
+## Layout
+
+The default placement is one box followed by the progress bar and then the remaining methods:
+
+```
+┌─ support box ──────────────────────────────┐
+│ ♥  Help keep our community running         │
+│    Community-funded projects…   [ 10.00  ] │
+│    [no ads] [community funded]  [ Donate ] │
+└────────────────────────────────────────────┘
+  120 EUR of 200 EUR · Monthly          60%
+  ▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+┌ PayPal ──────────┐ ┌ Bank transfer ──────┐
+```
+
+The box is the hero and the featured method in one: copy on the left, that method's amount field and button on the right. Every other method follows in the grid. The icon is set by `support_icon`; it is the only icon in the layout.
+
 ## Support bar
 
 The support bar can be enabled globally and shown independently in the modal, post embeds, plugin outlets and generic embeds. It supports inline, stacked and compact layouts.
+
+The figures read as one line — raised total, what it is measured against, the period, and the percentage — so nothing is separated across the width of the bar. `support_label` is used as the bar's accessible name rather than a visible heading.
 
 Below the first goal it uses `tertiary-low` as the track and `tertiary` as the fill; at exactly 100% — and at every exact 200%, 300%… milestone — the track and fill use `success`. Between milestones the track uses `success-low` and the current cycle uses `success` as its fill, while the displayed percentage keeps showing the real total (for example 125% or 220%).
 
@@ -159,6 +179,8 @@ The HTML stays stable while the component owns all markup and CSS, which makes t
 
 Enable `outlet_enabled` and provide one or more outlet names in `outlet_locations`, separated by `|`. The component renders through `api.renderInOutlet()`.
 
+Outlet widgets and generic embeds both honour `url_must_contain`, `display_on_homepage`, `show_for_members`, `show_for_anon`, `trust_level` and `excluded_groups`, re-checked on every navigation. Post embeds deliberately skip those checks: a `[wrap=donate]` block was placed on that page on purpose by whoever wrote the post.
+
 Examples: `above-main-container`, `before-topic-list`, `after-topic-list`, `topic-list-bottom`, `below-site-header`, `main-outlet-bottom`, `before-main-outlet`. Exact availability depends on the Discourse version and the installed themes and components.
 
 The outlet view and design can be configured independently from the global defaults.
@@ -177,8 +199,13 @@ View controls how much content is shown:
 - `compact` — reduced chrome for tighter placements
 - `minimal` — method-focused presentation
 - `progress` — support goal and progress only
+- `sidebar` — a purpose-built compact block for sidebar outlets: icon, short title, slim bar, amount field and button. Not the full box scaled down; it drops the hero copy and the method grid, because neither fits.
 
 Design and view are intentionally orthogonal, so every view works with every design.
+
+## Icons
+
+`support_icon` sets the one icon in the layout — the box, the sidebar block, and the fallback when a method has no uploaded logo. It defaults to `ph-dt-hand-heart`, which needs the [Phosphor Duotone icons component](https://github.com/somos-criptonautas/discourse-phosphor-duotone-icons-nautas) installed; set it to `heart` or any other core icon name if you are not using that component.
 
 ## Localization
 

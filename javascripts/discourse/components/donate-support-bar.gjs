@@ -2,7 +2,6 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { htmlSafe } from "@ember/template";
 import { i18n } from "discourse-i18n";
-import icon from "discourse/helpers/d-icon";
 import { fetchDonations } from "../lib/btcpay";
 import DonateSupporterAvatars from "./donate-supporter-avatars";
 
@@ -139,23 +138,35 @@ export default class DonateSupportBar extends Component {
     {{#if this.hasGoal}}
       <section
         class={{this.rootClasses}}
-        aria-label={{i18n (themePrefix "support_bar.aria_label")}}
+        aria-label={{if
+          settings.support_label
+          settings.support_label
+          (i18n (themePrefix "support_bar.default_label"))
+        }}
       >
-        <div class="donate-support-bar__heading">
-          <span class="donate-support-bar__label">
-            {{icon "heart"}}
-            {{if
-              settings.support_label
-              settings.support_label
-              (i18n (themePrefix "support_bar.default_label"))
-            }}
+        {{! Figures and percentage sit together: the raised total, what it is
+            measured against, and how far along it is, read as one sentence. }}
+        <div class="donate-support-bar__summary">
+          <span class="donate-support-bar__figures">
+            <strong>{{this.amountText}}</strong>
+            <span>
+              {{#if this.overGoal}}
+                {{i18n (themePrefix "support_bar.goal_exceeded")}}
+              {{else if this.reached}}
+                {{i18n (themePrefix "support_bar.goal_reached")}}
+              {{else}}
+                {{i18n (themePrefix "support_bar.of_goal")}}
+                {{this.goalText}}
+              {{/if}}
+              ·
+              {{this.periodText}}
+            </span>
           </span>
-          <strong>{{this.percentage}}%</strong>
-        </div>
 
-        {{#if settings.supporter_avatars_enabled}}
-          <DonateSupporterAvatars />
-        {{/if}}
+          <strong
+            class="donate-support-bar__percentage"
+          >{{this.percentage}}%</strong>
+        </div>
 
         <div
           class="donate-support-bar__track {{this.progressTrackClass}}"
@@ -174,21 +185,9 @@ export default class DonateSupportBar extends Component {
           </span>
         </div>
 
-        <div class="donate-support-bar__totals">
-          <strong>{{this.amountText}}</strong>
-          <span>
-            {{#if this.overGoal}}
-              {{i18n (themePrefix "support_bar.goal_exceeded")}}
-            {{else if this.reached}}
-              {{i18n (themePrefix "support_bar.goal_reached")}}
-            {{else}}
-              {{i18n (themePrefix "support_bar.of_goal")}}
-              {{this.goalText}}
-            {{/if}}
-            ·
-            {{this.periodText}}
-          </span>
-        </div>
+        {{#if settings.supporter_avatars_enabled}}
+          <DonateSupporterAvatars />
+        {{/if}}
       </section>
     {{/if}}
   </template>

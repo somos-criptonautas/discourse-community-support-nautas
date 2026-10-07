@@ -1,10 +1,9 @@
 es:
   hero:
-    eyebrow: "Apoyo de la comunidad"
     title: "Sostener nuestra comunidad"
     highlights_label: "Por qué apoyar"
-  featured:
-    kicker: "Opción de apoyo destacada"
+  sidebar:
+    title: "Apóyanos"
   btcpay:
     amount_label: "Importe de la donación"
     amount_placeholder: "Importe"
@@ -12,11 +11,6 @@ es:
     login_to_donate: "Iniciar sesión para donar"
   copied_value: "Valor copiado"
   no_copied_value: "No se pudo copiar"
-  methods:
-    kicker: "Opciones disponibles"
-    title: "Formas de apoyar"
-  footer:
-    thanks: "Gracias por apoyar a la comunidad."
   support_bar:
     aria_label: "Apoyo de la comunidad"
     progress_label: "Progreso del objetivo de apoyo"
@@ -46,6 +40,7 @@ es:
       trust_level: "Nivel de confianza mínimo para mostrar el activador de donaciones"
       modal_size: "Ancho del modal de apoyo"
       excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"
+      support_icon: "Icono de la caja de apoyo y del bloque de la barra lateral. Los nombres Phosphor como <code>ph-dt-hand-heart</code> requieren el componente de iconos Phosphor Duotone; usa <code>heart</code> para un icono del núcleo."
       design: "Diseño visual que usa la interfaz de apoyo"
       default_post_view: "Disposición por defecto de los bloques de apoyo insertados"
       enable_post_embed: "Activar [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] y [wrap=donate-progress] en las respuestas"
@@ -86,9 +81,6 @@ es:
         description: "Métodos de apoyo disponibles: agregar, editar, ordenar y configurar"
         schema:
           properties:
-            featured:
-              label: "Destacado"
-              description: "Usar este como método de apoyo destacado"
             name:
               label: "Nombre"
               description: "Nombre del método de apoyo"

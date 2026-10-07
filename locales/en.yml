@@ -1,10 +1,9 @@
 en:
   hero:
-    eyebrow: "Community support"
     title: "Help keep our community running"
     highlights_label: "Why support"
-  featured:
-    kicker: "Featured support option"
+  sidebar:
+    title: "Support us"
   btcpay:
     amount_label: "Donation amount"
     amount_placeholder: "Amount"
@@ -12,11 +11,6 @@ en:
     login_to_donate: "Log in to donate"
   copied_value: "Value copied"
   no_copied_value: "Copying failed"
-  methods:
-    kicker: "Available options"
-    title: "Support in the way that works for you"
-  footer:
-    thanks: "Thank you for supporting the community."
   support_bar:
     aria_label: "Community support"
     progress_label: "Support goal progress"
@@ -46,6 +40,7 @@ en:
       trust_level: "Minimum trust level required to display the donation trigger"
       modal_size: "Width of the support modal"
       excluded_groups: "Groups that should not see the automatic support trigger, outlet widgets or generic embeds; contextual [wrap=donate] blocks and the manual #donate link remain available"
+      support_icon: "Icon shown in the support box and the sidebar block. Phosphor names such as <code>ph-dt-hand-heart</code> need the Phosphor Duotone icons component installed; use <code>heart</code> for a core icon."
       design: "Visual design used by the support UI"
       default_post_view: "Default layout used by embedded support blocks"
       enable_post_embed: "Enable [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] and [wrap=donate-progress] in posts"
@@ -86,9 +81,6 @@ en:
         description: "Add, edit, reorder and configure the available support methods"
         schema:
           properties:
-            featured:
-              label: "Featured"
-              description: "Use this as the featured support method"
             name:
               label: "Name"
               description: "Support method name"

@@ -1,11 +1,22 @@
 import { apiInitializer } from "discourse/lib/api";
-import { defaultHomepage } from "discourse/lib/utilities";
+import {
+  displayForUser,
+  isInExcludedGroup,
+  matchesRoute,
+  meetsTrustLevel,
+} from "../lib/visibility";
 import DonateModal from "../components/modal/donate-modal";
 import DonatePost from "../components/donate-post";
 import DonateOutlet from "../components/donate-outlet";
 import DonateWidgetPortal from "../components/donate-widget-portal";
 
-const VIEW_NAMES = new Set(["full", "compact", "minimal", "progress"]);
+const VIEW_NAMES = new Set([
+  "full",
+  "compact",
+  "minimal",
+  "progress",
+  "sidebar",
+]);
 const WRAP_VIEWS = {
   donate: "full",
   "donate-compact": "compact",
@@ -18,56 +29,6 @@ export default apiInitializer("1.15.0", (api) => {
   const modal = api.container.lookup("service:modal");
   const currentUser = api.getCurrentUser();
 
-  function displayForUser() {
-    return (
-      (settings.show_for_members && currentUser) ||
-      (settings.show_for_anon && !currentUser)
-    );
-  }
-
-  function showOnRoute() {
-    const path = router.currentURL || "";
-
-    if (
-      settings.display_on_homepage &&
-      router.currentRouteName === `discovery.${defaultHomepage()}`
-    ) {
-      return true;
-    }
-
-    const configuredPaths = settings.url_must_contain || "";
-    if (!configuredPaths.length) {
-      return false;
-    }
-
-    return configuredPaths.split("|").some((allowedPath) => {
-      if (allowedPath.slice(-1) === "*") {
-        return path.indexOf(allowedPath.slice(0, -1)) === 0;
-      }
-      return path === allowedPath;
-    });
-  }
-
-  function isInExcludedGroup() {
-    if (!currentUser || !settings.excluded_groups) {
-      return false;
-    }
-
-    const excludedGroupIds = settings.excluded_groups
-      .split("|")
-      .map((id) => parseInt(id, 10));
-
-    return currentUser.visibleGroups?.some((group) =>
-      excludedGroupIds.includes(group.id)
-    );
-  }
-
-  function meetsTrustLevel() {
-    return (
-      !currentUser || currentUser.trust_level >= Number(settings.trust_level)
-    );
-  }
-
   function openModal(event) {
     event?.preventDefault();
     event?.stopPropagation();
@@ -77,7 +38,12 @@ export default apiInitializer("1.15.0", (api) => {
 
   function handleDonateClick(event) {
     const link = event.target.closest?.('a[href="#donate"]');
-    if (!link || !meetsTrustLevel() || !displayForUser() || !showOnRoute()) {
+    if (
+      !link ||
+      !meetsTrustLevel(currentUser) ||
+      !displayForUser(currentUser) ||
+      !matchesRoute(router)
+    ) {
       return;
     }
 
@@ -118,10 +84,12 @@ export default apiInitializer("1.15.0", (api) => {
     });
   }
 
+  // The per-page checks live in DonateOutlet so they re-run on navigation;
+  // only the group check is stable enough to decide registration up front.
   if (
     settings.outlet_enabled &&
     settings.outlet_locations &&
-    !isInExcludedGroup()
+    !isInExcludedGroup(currentUser)
   ) {
     settings.outlet_locations
       .split("|")
