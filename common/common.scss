@@ -37,6 +37,8 @@
   --donate-line: var(--primary-low);
   --donate-muted: var(--primary-medium);
   --donate-soft-shadow: 0 24px 70px -42px rgb(var(--always-black-rgb), 0.45);
+  --donate-radius: 0.9rem;
+  --donate-gutter: clamp(1.35rem, 4vw, 2.4rem);
 
   .d-modal__container {
     overflow: hidden;
@@ -201,6 +203,7 @@
   }
 
   .donate-modal__hero-copy h2 {
+    text-wrap: balance;
     margin: 0 0 0.4rem;
     color: var(--secondary);
     font-size: clamp(1.7rem, 4vw, 2.45rem);
@@ -216,11 +219,10 @@
   }
 
   .donate-modal__hero-pills {
-    grid-column: 2;
     display: flex;
     flex-wrap: wrap;
     gap: 0.45rem;
-    margin-top: 0.15rem;
+    margin-top: 0.9rem;
   }
 
   .donate-modal__hero-pills span {
@@ -326,7 +328,7 @@
     min-width: 0;
     padding: 0.85rem;
     border: 1px solid var(--primary-low);
-    border-radius: 0.9rem;
+    border-radius: var(--donate-radius);
     background: var(--secondary);
     color: var(--primary);
     text-align: left;
@@ -391,12 +393,14 @@
   }
 
   .donate-option-card__content h3 {
+    text-wrap: balance;
     margin: 0 0 0.18rem;
     font-size: var(--font-up-1);
     line-height: 1.2;
   }
 
   .donate-option-card__content p {
+    text-wrap: pretty;
     margin: 0 0 0.5rem;
     color: var(--donate-muted);
     line-height: 1.4;
@@ -595,7 +599,7 @@
     }
 
     .donate-modal__hero-pills {
-      margin-top: 0.15rem;
+      margin-top: 0.75rem;
     }
 
     .donate-modal__hero-action {
@@ -743,9 +747,9 @@
 .donate-embed {
   .donate-support-bar {
     margin: 0;
-    padding: 0.9rem 1rem 0.85rem;
+    padding: 0.9rem var(--donate-gutter) 0.85rem;
     border-bottom: 1px solid var(--primary-low);
-    background: var(--secondary);
+    background: var(--primary-very-low);
   }
 
   // Raised total, what it is measured against and the percentage all sit on
@@ -776,6 +780,51 @@
   .donate-support-bar__figures > span {
     color: var(--donate-muted);
     font-size: var(--font-down-1);
+  }
+
+  .donate-support-bar__skeleton {
+    display: block;
+    height: 0.75em;
+    border-radius: 999px;
+    background: var(--primary-low);
+    animation: donate-skeleton-pulse 1.4s ease-in-out infinite;
+  }
+
+  .donate-support-bar__skeleton.--amount {
+    width: 4.5rem;
+  }
+
+  .donate-support-bar__skeleton.--goal {
+    width: 7.5rem;
+    opacity: 0.7;
+  }
+
+  .donate-support-bar__skeleton.--percentage {
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 0.85em;
+  }
+
+  .donate-support-bar__figures.--placeholder {
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @keyframes donate-skeleton-pulse {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .donate-support-bar__skeleton {
+      animation: none;
+    }
   }
 
   .donate-support-bar__percentage {
@@ -1287,4 +1336,43 @@
   .donate-option-card__error {
     margin: 0;
   }
+}
+
+// -------------------------------------------------------------------------//
+//  One focus ring for every control in the component. An outline rather than
+//  a box-shadow, so it survives forced-colors mode.
+// -------------------------------------------------------------------------//
+.d-modal.donate-modal,
+.donate-embed {
+  .donate-option-card__amount input:focus-visible,
+  .donate-option-card__copy:focus-visible,
+  .donate-option-card__content .btn:focus-visible,
+  .donate-modal__hero-action .btn:focus-visible,
+  .donate-sidebar .btn:focus-visible {
+    outline: 2px solid var(--tertiary);
+    outline-offset: 2px;
+  }
+}
+
+// -------------------------------------------------------------------------//
+//  Standalone placements stack three rounded surfaces — box, bar, cards — so
+//  the box picks up the cards' radius. The modal keeps them flush instead:
+//  there the hero is clipped by the modal container and rounding it would
+//  leave bare corners.
+// -------------------------------------------------------------------------//
+.donate-embed:not(.--view-sidebar) {
+  .donate-modal__hero {
+    border-radius: var(--donate-radius);
+  }
+
+  .donate-support-bar {
+    margin-top: 0.6rem;
+    border: 1px solid var(--primary-low);
+    border-radius: var(--donate-radius);
+  }
+}
+
+.donate-embed .donate-modal__hero-copy h2,
+.donate-embed .donate-modal__hero-copy p {
+  text-wrap: pretty;
 }

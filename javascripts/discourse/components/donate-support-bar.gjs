@@ -10,6 +10,11 @@ export default class DonateSupportBar extends Component {
   // plugin isn't installed, so the manual setting keeps working.
   @tracked liveTotal = null;
   @tracked liveCurrency = null;
+  // The manual setting and the live total rarely agree, so showing the
+  // setting first means flashing a number that is about to be corrected.
+  // Hold the figures back until the request settles; the section itself is
+  // already laid out, so nothing moves when they arrive.
+  @tracked loadingTotal = true;
 
   constructor(owner, args) {
     super(owner, args);
@@ -19,12 +24,16 @@ export default class DonateSupportBar extends Component {
   async loadLiveTotal() {
     const data = await fetchDonations();
 
-    if (this.isDestroying || this.isDestroyed || data?.total == null) {
+    if (this.isDestroying || this.isDestroyed) {
       return;
     }
 
-    this.liveTotal = Math.max(0, Number(data.total) || 0);
-    this.liveCurrency = data.currency || null;
+    if (data?.total != null) {
+      this.liveTotal = Math.max(0, Number(data.total) || 0);
+      this.liveCurrency = data.currency || null;
+    }
+
+    this.loadingTotal = false;
   }
 
   get goal() {
@@ -47,7 +56,7 @@ export default class DonateSupportBar extends Component {
   }
 
   get progressWidth() {
-    if (!this.hasGoal) {
+    if (!this.hasGoal || this.loadingTotal) {
       return 0;
     }
 
@@ -106,6 +115,7 @@ export default class DonateSupportBar extends Component {
     return [
       "donate-support-bar",
       `--layout-${this.layout}`,
+      this.loadingTotal ? "--loading" : null,
       this.overGoal ? "--goal-exceeded" : null,
       this.reached ? "--goal-reached" : null,
     ]
@@ -146,26 +156,43 @@ export default class DonateSupportBar extends Component {
       >
         {{! Figures and percentage sit together: the raised total, what it is
             measured against, and how far along it is, read as one sentence. }}
-        <div class="donate-support-bar__summary">
-          <span class="donate-support-bar__figures">
-            <strong>{{this.amountText}}</strong>
-            <span>
-              {{#if this.overGoal}}
-                {{i18n (themePrefix "support_bar.goal_exceeded")}}
-              {{else if this.reached}}
-                {{i18n (themePrefix "support_bar.goal_reached")}}
-              {{else}}
-                {{i18n (themePrefix "support_bar.of_goal")}}
-                {{this.goalText}}
-              {{/if}}
-              ·
-              {{this.periodText}}
+        <div
+          class="donate-support-bar__summary"
+          aria-busy={{this.loadingTotal}}
+        >
+          {{#if this.loadingTotal}}
+            <span
+              class="donate-support-bar__figures --placeholder"
+              aria-hidden="true"
+            >
+              <span class="donate-support-bar__skeleton --amount"></span>
+              <span class="donate-support-bar__skeleton --goal"></span>
             </span>
-          </span>
+            <span
+              class="donate-support-bar__skeleton --percentage"
+              aria-hidden="true"
+            ></span>
+          {{else}}
+            <span class="donate-support-bar__figures">
+              <strong>{{this.amountText}}</strong>
+              <span>
+                {{#if this.overGoal}}
+                  {{i18n (themePrefix "support_bar.goal_exceeded")}}
+                {{else if this.reached}}
+                  {{i18n (themePrefix "support_bar.goal_reached")}}
+                {{else}}
+                  {{i18n (themePrefix "support_bar.of_goal")}}
+                  {{this.goalText}}
+                {{/if}}
+                ·
+                {{this.periodText}}
+              </span>
+            </span>
 
-          <strong
-            class="donate-support-bar__percentage"
-          >{{this.percentage}}%</strong>
+            <strong
+              class="donate-support-bar__percentage"
+            >{{this.percentage}}%</strong>
+          {{/if}}
         </div>
 
         <div
