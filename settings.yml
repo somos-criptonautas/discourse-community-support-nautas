@@ -14,14 +14,6 @@ url_must_contain:
 trust_level:
   type: string
   default: "0"
-auto_open_modal:
-  type: bool
-  default: true
-auto_open_delay:
-  type: integer
-  default: 1500
-  min: 0
-  description: auto_open_delay_description
 modal_size:
   type: enum
   default: large
@@ -29,15 +21,6 @@ modal_size:
     - normal
     - large
     - maximized
-cookie_lifespan:
-  type: enum
-  default: none
-  choices:
-    - minute
-    - day
-    - week
-    - month
-    - year
 excluded_groups:
   type: list
   list_type: group

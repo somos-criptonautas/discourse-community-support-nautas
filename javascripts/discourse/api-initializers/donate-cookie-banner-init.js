@@ -1,5 +1,4 @@
 import { apiInitializer } from "discourse/lib/api";
-import cookie, { removeCookie } from "discourse/lib/cookie";
 import { defaultHomepage } from "discourse/lib/utilities";
 import DonateModal from "../components/modal/donate-modal";
 import DonatePost from "../components/donate-post";
@@ -18,25 +17,6 @@ export default apiInitializer("1.15.0", (api) => {
   const router = api.container.lookup("service:router");
   const modal = api.container.lookup("service:modal");
   const currentUser = api.getCurrentUser();
-
-  let autoOpenTimeout = null;
-  let autoOpenAttempted = false;
-
-  function cookieExpirationDate() {
-    if (settings.cookie_lifespan === "none") {
-      removeCookie("donate_trigger_closed", { path: "/" });
-      return null;
-    }
-
-    return moment().add(1, settings.cookie_lifespan).toDate();
-  }
-
-  function dismiss() {
-    const expires = cookieExpirationDate();
-    if (expires) {
-      cookie("donate_trigger_closed", "true", { expires, path: "/" });
-    }
-  }
 
   function displayForUser() {
     return (
@@ -88,62 +68,20 @@ export default apiInitializer("1.15.0", (api) => {
     );
   }
 
-  function shouldShow() {
-    return (
-      meetsTrustLevel() &&
-      displayForUser() &&
-      showOnRoute() &&
-      !isInExcludedGroup()
-    );
-  }
-
   function openModal(event) {
     event?.preventDefault();
     event?.stopPropagation();
 
-    modal.show(DonateModal, {
-      model: {
-        onClose: dismiss,
-      },
-    });
+    modal.show(DonateModal);
   }
 
   function handleDonateClick(event) {
     const link = event.target.closest?.('a[href="#donate"]');
-    if (!link || !displayForUser() || !showOnRoute()) {
+    if (!link || !meetsTrustLevel() || !displayForUser() || !showOnRoute()) {
       return;
     }
 
     openModal(event);
-  }
-
-  function maybeAutoOpen() {
-    if (
-      !settings.auto_open_modal ||
-      !shouldShow() ||
-      cookie("donate_trigger_closed") ||
-      autoOpenAttempted ||
-      autoOpenTimeout
-    ) {
-      return;
-    }
-
-    const delay = Math.max(0, Number(settings.auto_open_delay) || 0);
-
-    autoOpenTimeout = setTimeout(() => {
-      autoOpenTimeout = null;
-      autoOpenAttempted = true;
-
-      if (
-        !settings.auto_open_modal ||
-        !shouldShow() ||
-        cookie("donate_trigger_closed")
-      ) {
-        return;
-      }
-
-      openModal();
-    }, delay);
   }
 
   function resolveView(value, fallback = "full") {
@@ -211,14 +149,8 @@ export default apiInitializer("1.15.0", (api) => {
   }
 
   document.addEventListener("click", handleDonateClick);
-  maybeAutoOpen();
-  router.on("routeDidChange", maybeAutoOpen);
 
   return () => {
     document.removeEventListener("click", handleDonateClick);
-    router.off("routeDidChange", maybeAutoOpen);
-    if (autoOpenTimeout) {
-      clearTimeout(autoOpenTimeout);
-    }
   };
 });

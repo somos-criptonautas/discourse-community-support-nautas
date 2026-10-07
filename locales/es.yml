@@ -44,10 +44,7 @@ es:
       display_on_homepage: "Mostrar el activador de donaciones en la portada configurada"
       url_must_contain: "Mostrar el activador de donaciones en las rutas que coincidan. Con <code>*</code> al final como comodín"
       trust_level: "Nivel de confianza mínimo para mostrar el activador de donaciones"
-      auto_open_modal: "Abrir automáticamente el modal de apoyo mientras no se haya descartado"
-      auto_open_delay: "Espera antes de abrir automáticamente el modal de apoyo"
       modal_size: "Ancho del modal de apoyo"
-      cookie_lifespan: "Cuánto tiempo se recuerda que el modal de apoyo fue descartado"
       excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"
       design: "Diseño visual que usa la interfaz de apoyo"
       default_post_view: "Disposición por defecto de los bloques de apoyo insertados"
@@ -158,4 +155,3 @@ es:
                     label: "Idioma"
                   text:
                     label: "Texto"
-      auto_open_delay_description: "Espera en milisegundos antes de que el modal de apoyo se abra automáticamente"

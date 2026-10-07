@@ -29,7 +29,6 @@ const INVOICE = {
 // The outlet is the cheapest way to get the donation UI on screen: unlike the
 // modal it needs no auto-open timer and no click target.
 const OUTLET_SETTINGS = {
-  auto_open_modal: false,
   outlet_enabled: true,
   outlet_locations: "above-main-container",
   support_bar_enabled: true,

@@ -44,10 +44,7 @@ en:
       display_on_homepage: "Display the donation trigger on the configured homepage"
       url_must_contain: "Display the donation trigger on matching paths. Add <code>*</code> to the end for a wildcard"
       trust_level: "Minimum trust level required to display the donation trigger"
-      auto_open_modal: "Automatically open the support modal when it has not been dismissed"
-      auto_open_delay: "Delay before automatically opening the support modal"
       modal_size: "Width of the support modal"
-      cookie_lifespan: "How long to remember a dismissed support modal"
       excluded_groups: "Groups that should not see the automatic support trigger, outlet widgets or generic embeds; contextual [wrap=donate] blocks and the manual #donate link remain available"
       design: "Visual design used by the support UI"
       default_post_view: "Default layout used by embedded support blocks"
@@ -158,4 +155,3 @@ en:
                     label: "Locale"
                   text:
                     label: "Text"
-      auto_open_delay_description: "Delay in milliseconds before the support modal opens automatically"

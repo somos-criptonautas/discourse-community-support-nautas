@@ -21,10 +21,9 @@ Install it as a component and add it to the themes that should show it.
 
 ## Features
 
-- Optional automatic support modal with cookie-based dismissal
 - Manual `#donate` trigger — any link with that href opens the modal
 - Visibility controls for members/anonymous users, trust level, routes and excluded groups
-- Excluded groups hide automatic modal triggers, plugin outlet widgets and generic embeds, while contextual `[wrap=donate]` blocks and the `#donate` link remain available
+- Excluded groups hide plugin outlet widgets and generic embeds, while contextual `[wrap=donate]` blocks and the `#donate` link remain available
 - Donation methods with logos, links and copyable values (IBAN, handle, address…)
 - On-site BTCPay donations, with an amount field in place of the outbound link
 - Per-method translations using the Discourse locale list

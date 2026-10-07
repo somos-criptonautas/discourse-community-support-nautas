@@ -21,10 +21,9 @@ Instálalo como componente y añádelo a los temas que deban mostrarlo.
 
 ## Funciones
 
-- Modal de apoyo automático opcional, con descarte recordado por cookie
 - Activador manual `#donate` — cualquier enlace con ese href abre el modal
 - Control de visibilidad por miembros/anónimos, nivel de confianza, rutas y grupos excluidos
-- Los grupos excluidos ocultan el modal automático, los widgets de outlet y los embeds genéricos, mientras que los bloques contextuales `[wrap=donate]` y el enlace `#donate` siguen disponibles
+- Los grupos excluidos ocultan los widgets de outlet y los embeds genéricos, mientras que los bloques contextuales `[wrap=donate]` y el enlace `#donate` siguen disponibles
 - Métodos de donación con logotipos, enlaces y valores copiables (IBAN, alias, dirección…)
 - Donaciones BTCPay dentro del sitio, con un campo de importe en lugar del enlace saliente
 - Traducciones por método usando la lista de idiomas de Discourse
