@@ -5,6 +5,7 @@ import { on } from "@ember/modifier";
 import { service } from "@ember/service";
 import icon from "discourse/helpers/d-icon";
 import { ajax } from "discourse/lib/ajax";
+import DiscourseURL from "discourse/lib/url";
 import { extractError } from "discourse/lib/ajax-error";
 import { getOwnerWithFallback } from "discourse/lib/get-owner";
 import { i18n } from "discourse-i18n";
@@ -17,6 +18,7 @@ import { stripeDonationUrl } from "../lib/stripe";
 // the merged hero box and the sidebar block can use it without a card around it.
 export default class DonateMethodAction extends Component {
   @service currentUser;
+  @service siteSettings;
 
   @tracked copied = false;
   @tracked amount = "";
@@ -30,9 +32,25 @@ export default class DonateMethodAction extends Component {
     return Boolean(this.args.useBtcpay);
   }
 
+  // A member paying by card goes through BTCPay's Stripe plugin when the
+  // plugin offers it: same invoice, same webhook, so the donation is credited
+  // like a crypto one. The Payment Link is the fallback for everyone else.
+  get cardViaBtcpay() {
+    return Boolean(
+      this.args.useStripe &&
+      !this.useBtcpay &&
+      this.currentUser &&
+      this.siteSettings.btcpay_card_payments &&
+      this.siteSettings.btcpay_donations_enabled
+    );
+  }
+
   // BTCPay wins if both are set: it is the one with a server-side contract.
   get useStripe() {
-    return !this.useBtcpay && Boolean(this.args.useStripe && this.args.url);
+    return (
+      !this.useBtcpay &&
+      Boolean(this.args.useStripe && (this.cardViaBtcpay || this.args.url))
+    );
   }
 
   get showUrl() {
@@ -58,7 +76,8 @@ export default class DonateMethodAction extends Component {
   constructor(...args) {
     super(...args);
 
-    if (this.useBtcpay) {
+    // Both charge in the plugin's currency, not the theme's display setting.
+    if (this.useBtcpay || this.cardViaBtcpay) {
       this.loadCurrency();
     }
 
@@ -96,7 +115,7 @@ export default class DonateMethodAction extends Component {
   }
 
   @action
-  async donate(event) {
+  async donate(event, paymentMethod = null) {
     event?.preventDefault();
 
     if (this.busy || !this.amount) {
@@ -109,8 +128,21 @@ export default class DonateMethodAction extends Component {
     try {
       const { invoice_id, modal_url, checkout_url } = await ajax(
         "/btcpay/donate.json",
-        { type: "POST", data: { amount: String(this.amount) } }
+        {
+          type: "POST",
+          data: {
+            amount: String(this.amount),
+            ...(paymentMethod && { payment_method: paymentMethod }),
+          },
+        }
       );
+
+      // A card invoice opens on BTCPay's Stripe page, which the overlay
+      // cannot point at, so the plugin sends no modal for it.
+      if (!modal_url) {
+        DiscourseURL.redirectTo(checkout_url);
+        return;
+      }
 
       try {
         await loadModalScript(modal_url);
@@ -135,6 +167,10 @@ export default class DonateMethodAction extends Component {
 
   @action
   submitAmount(event) {
+    if (this.cardViaBtcpay) {
+      return this.donate(event, "card");
+    }
+
     return this.useStripe ? this.openStripe(event) : this.donate(event);
   }
 

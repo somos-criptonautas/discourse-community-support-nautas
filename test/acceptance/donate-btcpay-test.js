@@ -1,6 +1,8 @@
 import { click, fillIn, visit } from "@ember/test-helpers";
 import { test } from "qunit";
+import DiscourseURL from "discourse/lib/url";
 import { acceptance } from "discourse/tests/helpers/qunit-helpers";
+import sinon from "sinon";
 // The theme bundle mounts javascripts/discourse/ at the theme root, so theme
 // modules are two levels up from test/acceptance/ without the javascripts/ part.
 import { resetBtcpayCaches } from "../../discourse/lib/btcpay";
@@ -266,5 +268,69 @@ acceptance("Community Support | anonymous visitors", function (needs) {
       .dom(".donate-modal__hero-action .donate-option-card__amount-form")
       .doesNotExist();
     assert.dom(".donate-modal__hero-action button.btn-primary").exists();
+  });
+});
+
+acceptance("Community Support | card through BTCPay", function (needs) {
+  needs.user();
+  needs.settings({
+    btcpay_card_payments: true,
+    btcpay_donations_enabled: true,
+  });
+
+  const requests = [];
+
+  needs.pretender((server, helper) => {
+    server.get("/btcpay/donations.json", () => helper.response(DONATIONS));
+    server.post("/btcpay/donate.json", (request) => {
+      requests.push(new URLSearchParams(request.requestBody));
+      return helper.response({
+        invoice_id: "INV2",
+        checkout_url: "https://btcpay.example.invalid/i/INV2/STRIPE",
+        modal_url: null,
+      });
+    });
+  });
+
+  let restoreSettings;
+
+  needs.hooks.beforeEach(function () {
+    requests.length = 0;
+    resetBtcpayCaches();
+    restoreSettings = applySettings(OUTLET_SETTINGS);
+  });
+
+  needs.hooks.afterEach(function () {
+    restoreSettings();
+    resetBtcpayCaches();
+  });
+
+  test("a member's card donation goes through BTCPay, not the Payment Link", async function (assert) {
+    const redirect = sinon.stub(DiscourseURL, "redirectTo");
+    const opened = [];
+    const originalOpen = window.open;
+    window.open = (url) => opened.push(url);
+
+    try {
+      await visit("/");
+      await fillIn(
+        ".donate-modal__grid .donate-option-card__amount-form input",
+        "10"
+      );
+      await click(
+        ".donate-modal__grid .donate-option-card__amount-form button[type='submit']"
+      );
+    } finally {
+      window.open = originalOpen;
+    }
+
+    assert.strictEqual(requests.length, 1, "the plugin creates the invoice");
+    assert.strictEqual(requests[0].get("payment_method"), "card");
+    assert.strictEqual(requests[0].get("amount"), "10");
+    assert.true(
+      redirect.calledWith("https://btcpay.example.invalid/i/INV2/STRIPE"),
+      "the invoice opens on BTCPay's Stripe page"
+    );
+    assert.strictEqual(opened.length, 0, "the Payment Link is not used");
   });
 });

@@ -103,7 +103,7 @@ Ambas vuelven a sus ajustes manuales si la petición falla o el plugin no está.
 
 El importe mínimo, la moneda de la donación y el límite de peticiones son ajustes del plugin, no de este componente.
 
-**Qué métodos de pago ofrece BTCPay no se configura aquí.** La factura muestra lo que esté activado en tu *tienda* de BTCPay: BTC on-chain, Lightning, Monero, etc. BTCPay Server no procesa tarjetas; para tarjetas, añade un método de Stripe a su lado.
+**Qué métodos de pago ofrece BTCPay no se configura aquí.** La factura muestra lo que esté activado en tu *tienda* de BTCPay: BTC on-chain, Lightning, Monero, etc. BTCPay Server no procesa tarjetas por sí mismo; para tarjetas, añade un método de Stripe a su lado. Más abajo está la vía que las acredita.
 
 ## Donaciones con Stripe
 
@@ -131,6 +131,14 @@ En la página de Stripe se ofrecen tarjetas —y Apple Pay, Google Pay o Link si
 Dos omisiones deliberadas. El correo del donante **no** se prerrellena, porque viajaría en la URL y acabaría en el historial del navegador y en los registros. Y las donaciones de Stripe **no** cuentan en la barra de apoyo: la referencia anterior la fija el navegador, lo que vale para una etiqueta en el panel de Stripe pero no para acreditar a nadie. Contarlas requeriría una pieza en el servidor que reciba el webhook `checkout.session.completed` de Stripe, igual que el plugin de BTCPay genera su id de pedido en el servidor.
 
 Si un método tiene activados `use_btcpay` y `use_stripe` a la vez, gana BTCPay.
+
+### Donaciones con tarjeta acreditadas, vía BTCPay
+
+Si la tienda de BTCPay tiene el [plugin Stripe](https://plugin-builder.btcpayserver.org/public/plugins/stripe-payments) y el plugin de suscripciones de BTCPay tiene activado `btcpay_card_payments`, la donación con tarjeta de un miembro **identificado** no pasa por el Payment Link. El método `use_stripe` le pide al plugin una factura de donación con `payment_method: card`, y BTCPay la abre en su página de Stripe.
+
+Es la misma factura y el mismo webhook que una donación en cripto, así que las donaciones con tarjeta cuentan en la barra de apoyo y en la lista de quienes apoyan, y otorgan la insignia de donante y los puntos. Eso resuelve la omisión de arriba. El importe se cobra en la `btcpay_donation_currency` del plugin, igual que con BTCPay.
+
+Quien no tiene cuenta sigue recibiendo el Payment Link, porque el plugin solo puede atribuir una donación a una cuenta. Entonces la `url` del método es opcional: sin ella, los visitantes anónimos no ven opción de tarjeta.
 
 ## Disposición
 

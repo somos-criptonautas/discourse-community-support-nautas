@@ -103,7 +103,7 @@ Both fall back to their manual settings when the request fails or the plugin is 
 
 The minimum donation amount, the donation currency and the rate limit are the plugin's site settings, not this component's.
 
-**Which payment methods BTCPay offers is not set here.** The invoice lists whatever is enabled on your BTCPay *store* — on-chain BTC, Lightning, Monero and so on. BTCPay Server does not process cards; for cards, add a Stripe method alongside it.
+**Which payment methods BTCPay offers is not set here.** The invoice lists whatever is enabled on your BTCPay *store* — on-chain BTC, Lightning, Monero and so on. BTCPay Server does not process cards by itself; for cards, add a Stripe method alongside it — see below for the route that credits them.
 
 ## Stripe donations
 
@@ -131,6 +131,14 @@ Cards — and Apple Pay, Google Pay or Link, if enabled on the payment link — 
 Two deliberate omissions. The donor's email is **not** prefilled, because it would travel in the URL and end up in browser history and logs. And Stripe donations are **not** counted in the support bar: the reference above is set by the browser, which is fine for a label in the Stripe dashboard but not for crediting anyone. Counting them would need a server piece that receives Stripe's `checkout.session.completed` webhook, the same way the BTCPay plugin generates its order id server-side.
 
 If both `use_btcpay` and `use_stripe` are set on one method, BTCPay wins.
+
+### Credited card donations, through BTCPay
+
+If the BTCPay store has the [Stripe plugin](https://plugin-builder.btcpayserver.org/public/plugins/stripe-payments) and the BTCPay subscriptions plugin has `btcpay_card_payments` on, a **logged-in** member's card donation skips the Payment Link. The `use_stripe` method then asks the plugin for a donation invoice with `payment_method: card`, and BTCPay opens it on its Stripe page.
+
+That is the same invoice and the same webhook as a crypto donation, so card donations count in the support bar and the supporter list, and earn the donor badge and points. That fixes the omission described above. The amount is charged in the plugin's `btcpay_donation_currency`, as with BTCPay.
+
+Visitors without an account still get the Payment Link, since the plugin can only attribute a donation to an account. A `url` is then optional on the method: without one, anonymous visitors see no card option.
 
 ## Layout
 
