@@ -81,6 +81,9 @@ en:
         description: "Add, edit, reorder and configure the available support methods"
         schema:
           properties:
+            featured:
+              label: "Featured"
+              description: "Put this method's amount field and button inside the support box. Only one method should be featured."
             name:
               label: "Name"
               description: "Support method name"
@@ -93,6 +96,9 @@ en:
             use_btcpay:
               label: "BTCPay donation"
               description: "Take the donation on-site through the BTCPay subscriptions plugin instead of linking out. Shows an amount field and a donate button; the URL is ignored."
+            use_stripe:
+              label: "Stripe donation"
+              description: "Treat the URL as a Stripe Payment Link set to let customers choose what to pay. Shows an amount field and prefills it on Stripe's page; cards and any wallets enabled on the link are offered there. Ignored when BTCPay donation is on."
             url:
               label: "URL"
               description: "Full support URL"

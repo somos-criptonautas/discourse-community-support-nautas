@@ -23,6 +23,15 @@ const LINK_METHOD = {
   translations: [],
 };
 
+const STRIPE_METHOD = {
+  name: "Card",
+  description: "Pay by card through Stripe.",
+  button_text: "Donate by card",
+  url: "https://buy.stripe.com/test_abc123",
+  use_stripe: true,
+  translations: [],
+};
+
 const DONATIONS = {
   currency: "EUR",
   total: 120,
@@ -52,7 +61,7 @@ const OUTLET_SETTINGS = {
   support_goal: 200,
   support_current: 10,
   support_currency: "",
-  donation_methods: [BTCPAY_METHOD, LINK_METHOD],
+  donation_methods: [BTCPAY_METHOD, LINK_METHOD, STRIPE_METHOD],
 };
 
 function applySettings(overrides) {
@@ -96,7 +105,7 @@ acceptance("Community Support | donation box", function (needs) {
     await visit("/");
 
     assert
-      .dom(".donate-modal__hero-action .donate-option-card__btcpay input")
+      .dom(".donate-modal__hero-action .donate-option-card__amount-form input")
       .exists();
     assert
       .dom(".donate-modal__hero-action a.btn-primary")
@@ -110,7 +119,7 @@ acceptance("Community Support | donation box", function (needs) {
   test("non-featured methods stay in the grid below", async function (assert) {
     await visit("/");
 
-    assert.dom(".donate-modal__grid .donate-option-card").exists({ count: 1 });
+    assert.dom(".donate-modal__grid .donate-option-card").exists({ count: 2 });
     assert.dom(".donate-modal__grid a.btn-primary").hasText("Open PayPal");
   });
 
@@ -142,20 +151,63 @@ acceptance("Community Support | donation box", function (needs) {
 
     await visit("/");
     await fillIn(
-      ".donate-modal__hero-action .donate-option-card__btcpay input",
+      ".donate-modal__hero-action .donate-option-card__amount-form input",
       "12.50"
     );
     await click(
-      ".donate-modal__hero-action .donate-option-card__btcpay button[type='submit']"
+      ".donate-modal__hero-action .donate-option-card__amount-form button[type='submit']"
     );
 
     assert.deepEqual(shown, ["INV1"], "the server-created invoice is shown");
     // Guard against a second click stacking a second overlay.
     assert
       .dom(
-        ".donate-modal__hero-action .donate-option-card__btcpay button[type='submit']"
+        ".donate-modal__hero-action .donate-option-card__amount-form button[type='submit']"
       )
       .isDisabled();
+  });
+
+  test("a Stripe method opens its payment link with the amount prefilled", async function (assert) {
+    const opened = [];
+    const originalOpen = window.open;
+    window.open = (url, target, features) =>
+      opened.push({ url, target, features });
+
+    try {
+      await visit("/");
+      // BTCPay is featured and lives in the box, so the only amount form in
+      // the list is the Stripe one.
+      await fillIn(
+        ".donate-modal__grid .donate-option-card__amount-form input",
+        "10"
+      );
+      await click(
+        ".donate-modal__grid .donate-option-card__amount-form button[type='submit']"
+      );
+    } finally {
+      window.open = originalOpen;
+    }
+
+    assert.strictEqual(opened.length, 1, "exactly one tab is opened");
+    const url = new URL(opened[0].url);
+    assert.strictEqual(url.origin + url.pathname, STRIPE_METHOD.url);
+    assert.strictEqual(url.searchParams.get("prefilled_amount"), "1000");
+    assert.true(
+      /^discourse-\d+$/.test(url.searchParams.get("client_reference_id")),
+      "logged-in donors are tagged with a Stripe-safe reference"
+    );
+    assert.strictEqual(opened[0].target, "_blank");
+  });
+
+  test("rows keep one template whatever fields a method fills in", async function (assert) {
+    await visit("/");
+
+    assert
+      .dom(".donate-modal__grid .donate-option-card__body")
+      .exists({ count: 2 });
+    assert
+      .dom(".donate-modal__grid .donate-option-card__action")
+      .exists({ count: 2 });
   });
 });
 
@@ -163,13 +215,24 @@ acceptance("Community Support | sidebar view", function (needs) {
   needs.user();
   setup(needs, { outlet_view: "sidebar" });
 
+  test("discourse-right-sidebar-blocks can resolve the block by name", function (assert) {
+    // That component looks blocks up with resolveRegistration and nothing
+    // else, so this is the whole integration contract.
+    assert.ok(
+      this.owner.resolveRegistration("component:donate-sidebar-block"),
+      "component:donate-sidebar-block resolves"
+    );
+  });
+
   test("the sidebar block is the compact variant, not the full box", async function (assert) {
     await visit("/");
 
     assert.dom(".donate-component.--view-sidebar .donate-sidebar").exists();
     assert.dom(".donate-sidebar__head strong").exists("it has a short title");
     assert.dom(".donate-sidebar .donate-support-bar__track").exists();
-    assert.dom(".donate-sidebar .donate-option-card__btcpay input").exists();
+    assert
+      .dom(".donate-sidebar .donate-option-card__amount-form input")
+      .exists();
     assert
       .dom(".donate-modal__hero")
       .doesNotExist("no hero copy in the sidebar");
@@ -200,7 +263,7 @@ acceptance("Community Support | anonymous visitors", function (needs) {
 
     // /btcpay/donate.json answers 403 for them, so never show the form.
     assert
-      .dom(".donate-modal__hero-action .donate-option-card__btcpay")
+      .dom(".donate-modal__hero-action .donate-option-card__amount-form")
       .doesNotExist();
     assert.dom(".donate-modal__hero-action button.btn-primary").exists();
   });

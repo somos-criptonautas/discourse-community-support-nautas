@@ -81,6 +81,9 @@ es:
         description: "Métodos de apoyo disponibles: agregar, editar, ordenar y configurar"
         schema:
           properties:
+            featured:
+              label: "Destacado"
+              description: "Coloca el campo de importe y el botón de este método dentro de la caja de apoyo. Solo debe destacarse un método."
             name:
               label: "Nombre"
               description: "Nombre del método de apoyo"
@@ -93,6 +96,9 @@ es:
             use_btcpay:
               label: "Donación BTCPay"
               description: "Cobrar la donación en el sitio mediante el plugin de suscripciones BTCPay en lugar de enlazar fuera. Muestra un campo de importe y un botón de donar; la URL se ignora."
+            use_stripe:
+              label: "Donación con Stripe"
+              description: "Trata la URL como un Payment Link de Stripe configurado para que el cliente elija el importe. Muestra un campo de importe y lo rellena en la página de Stripe; allí se ofrecen tarjetas y las carteras activadas en el enlace. Se ignora si la donación BTCPay está activa."
             url:
               label: "URL"
               description: "URL completa de apoyo"

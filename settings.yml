@@ -282,6 +282,9 @@ donation_methods:
       use_btcpay:
         type: boolean
         default: false
+      use_stripe:
+        type: boolean
+        default: false
       url:
         type: string
         default: ""

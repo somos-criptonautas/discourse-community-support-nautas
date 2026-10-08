@@ -27,6 +27,7 @@ Install it as a component and add it to the themes that should show it.
 - Donation methods with logos, links and copyable values (IBAN, handle, address…)
 - The featured method's amount field and button sit inside the support box itself
 - On-site BTCPay donations, with an amount field in place of the outbound link
+- Card donations through a Stripe Payment Link, with the amount prefilled — no secret key in the theme
 - Per-method translations using the Discourse locale list
 - Configurable hero highlights, with per-item translations from the same locale list
 - Support goal and progress bar, fed either by a manual setting or by live BTCPay totals
@@ -34,15 +35,16 @@ Install it as a component and add it to the themes that should show it.
 - Supporter avatars, from a manual list, from groups, and from real BTCPay donors
 - Classic, Minimal and Modern designs
 - Full, Compact, Minimal, Progress and Sidebar presentation views
+- A block for the core team's [Right Sidebar Blocks](https://github.com/discourse/discourse-right-sidebar-blocks) component
 - Post wrappers via `[wrap=donate*]`
 - Generic HTML embed for Discourse Ads and other HTML-capable placements
 - Configurable plugin outlet rendering through `renderInOutlet`
-- Responsive layout and reduced-motion support
+- Sized by its own width through container queries, so it fits a sidebar, a post or a modal alike; reduced-motion support
 - Accessible progress semantics and keyboard-friendly copy controls
 
 ## Donation methods
 
-Methods are configured in the `donation_methods` objects setting. One method can be marked `featured`, which promotes it to its own section above the grid.
+Methods are configured in the `donation_methods` objects setting. One method can be marked `featured`, which puts its amount field and button inside the support box; the rest are listed below it.
 
 ```yaml
 donation_methods:
@@ -62,8 +64,9 @@ donation_methods:
 | --- | --- |
 | `featured` | Use this method for the amount field and button inside the box |
 | `name`, `description`, `button_text` | Card copy (required) |
-| `url` | Outbound support URL. Ignored when `use_btcpay` is on |
+| `url` | Outbound support URL, or the Stripe Payment Link when `use_stripe` is on. Ignored when `use_btcpay` is on |
 | `use_btcpay` | Take the donation on-site through the BTCPay plugin |
+| `use_stripe` | Treat `url` as a Stripe Payment Link and prefill it with the entered amount |
 | `icon` | Optional provider logo (upload) |
 | `owner`, `provider` | Optional recipient and payment provider shown on the card |
 | `copy_label`, `copy_value` | One-click copyable value, such as an IBAN or address |
@@ -100,22 +103,68 @@ Both fall back to their manual settings when the request fails or the plugin is 
 
 The minimum donation amount, the donation currency and the rate limit are the plugin's site settings, not this component's.
 
+**Which payment methods BTCPay offers is not set here.** The invoice lists whatever is enabled on your BTCPay *store* — on-chain BTC, Lightning, Monero and so on. BTCPay Server does not process cards; for cards, add a Stripe method alongside it.
+
+## Stripe donations
+
+Stripe donations use a [Payment Link](https://docs.stripe.com/payment-links), which needs no secret key — the only way Stripe can live in a theme component.
+
+1. In the Stripe dashboard, create a Payment Link for a product with **Customers choose what to pay**. Optionally set a preset, a minimum and a maximum.
+2. Add a method with that link as `url` and `use_stripe` on:
+
+```yaml
+donation_methods:
+  - name: "Card"
+    description: "Pay by card or wallet."
+    button_text: "Donate by card"
+    url: "https://buy.stripe.com/…"
+    use_stripe: true
+```
+
+The method shows the same amount field as BTCPay. Submitting it opens the link in a new tab with:
+
+- `prefilled_amount` — the entered amount in the currency's smallest unit (10 EUR becomes `1000`; zero-decimal currencies such as JPY are not multiplied). The currency comes from `support_currency`. The donor can still change the amount on Stripe's page, and Stripe enforces the link's own minimum and maximum.
+- `client_reference_id=discourse-<user id>` for logged-in donors, so donations can be matched to forum accounts in the Stripe dashboard. The numeric id is used because Stripe silently drops values outside `A-Z a-z 0-9 _ -`, and usernames may contain dots.
+
+Cards — and Apple Pay, Google Pay or Link, if enabled on the payment link — are offered on Stripe's page. Unlike BTCPay, the form is shown to anonymous visitors too: Stripe needs no forum account.
+
+Two deliberate omissions. The donor's email is **not** prefilled, because it would travel in the URL and end up in browser history and logs. And Stripe donations are **not** counted in the support bar: the reference above is set by the browser, which is fine for a label in the Stripe dashboard but not for crediting anyone. Counting them would need a server piece that receives Stripe's `checkout.session.completed` webhook, the same way the BTCPay plugin generates its order id server-side.
+
+If both `use_btcpay` and `use_stripe` are set on one method, BTCPay wins.
+
 ## Layout
 
 The default placement is one box followed by the progress bar and then the remaining methods:
 
 ```
-┌─ support box ──────────────────────────────┐
-│ ♥  Help keep our community running         │
-│    Community-funded projects…   [ 10.00  ] │
-│    [no ads] [community funded]  [ Donate ] │
-└────────────────────────────────────────────┘
-  120 EUR of 200 EUR · Monthly          60%
-  ▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-┌ PayPal ──────────┐ ┌ Bank transfer ──────┐
+┌─ support box ──────────────────────────────────────┐
+│ ♥  Help keep our community running                 │
+│    Community-funded projects rely   ┌───────┐      │
+│    on people who find them useful.  │ 10 EUR│      │
+│    [no ads] [community funded]      └───────┘      │
+│                                     [  Donate  ]   │
+└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────┐
+│ 120 EUR of 200 EUR · Monthly                  60%  │
+│ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
+└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────┐
+│ ⬡  PayPal · paypal.me               [ Open PayPal ]│
+│    Support the community via PayPal.               │
+├────────────────────────────────────────────────────┤
+│ ⬡  Card · Stripe          [ 10 EUR ][ Donate card ]│
+│    Pay by card or wallet.                          │
+├────────────────────────────────────────────────────┤
+│ ⬡  Bank transfer · Caja Rural                      │
+│    ┌ IBAN  ES00 0000 0000 0000  ⧉ ┐               │
+└────────────────────────────────────────────────────┘
 ```
 
-The box is the hero and the featured method in one: copy on the left, that method's amount field and button on the right. Every other method follows in the grid. The icon is set by `support_icon`; it is the only icon in the layout.
+The box is the hero and the featured method in one: copy on the left, that method's amount field and button on the right. Every other method is a row in the list below. All rows share one template — icon, text, action — so a method with an owner, a provider or a copyable value lines up exactly like one without. Owner and provider ride on the name line; a copyable value sits in the text column.
+
+The layout responds to its own width rather than the window's (container queries). Below about 36rem the box's action moves under its copy and each row's action moves under its text — so it reads correctly in a narrow sidebar column on a wide screen, where viewport breakpoints would still say "desktop".
+
+In standalone placements the box, the bar and the list are three rounded surfaces with shared edges. In the modal they stay flush, because the modal already clips its own corners. The icon is set by `support_icon`; it is the only icon in the layout.
 
 ## Support bar
 
@@ -185,6 +234,20 @@ Examples: `above-main-container`, `before-topic-list`, `after-topic-list`, `topi
 
 The outlet view and design can be configured independently from the global defaults.
 
+## Right sidebar
+
+The core team's [Right Sidebar Blocks](https://github.com/discourse/discourse-right-sidebar-blocks) component renders a column of blocks beside topic lists. This component ships one for it, `donate-sidebar-block`, which shows the `sidebar` view.
+
+Install Right Sidebar Blocks, then add the block to its `blocks` setting:
+
+```json
+[{ "name": "donate-sidebar-block" }]
+```
+
+Order it among the other blocks there. Where the column appears is Right Sidebar Blocks' business — its `show_in_routes` setting, topic-list routes only, never on mobile. This component's own audience and route settings still apply on top, so `show_for_anon`, `trust_level`, `excluded_groups` and `url_must_contain` work the same as for outlets. The support bar is shown when `support_bar_in_outlets` is on.
+
+Right Sidebar Blocks looks blocks up by name through the resolver, which takes the first module whose path ends in `components/<name>`. That is why the name is long and specific; keep it that way.
+
 ## Views and designs
 
 Design controls the visual language:
@@ -199,7 +262,7 @@ View controls how much content is shown:
 - `compact` — reduced chrome for tighter placements
 - `minimal` — method-focused presentation
 - `progress` — support goal and progress only
-- `sidebar` — a purpose-built compact block for sidebar outlets: icon, short title, slim bar, amount field and button. Not the full box scaled down; it drops the hero copy and the method grid, because neither fits.
+- `sidebar` — a purpose-built compact block: icon, short title, slim bar, amount field and button. Not the full box scaled down; it drops the hero copy and the method list, because neither fits. Used by the [right sidebar block](#right-sidebar), and selectable for any outlet.
 
 Design and view are intentionally orthogonal, so every view works with every design.
 

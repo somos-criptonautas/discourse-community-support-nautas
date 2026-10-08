@@ -10,9 +10,10 @@ import { getOwnerWithFallback } from "discourse/lib/get-owner";
 import { i18n } from "discourse-i18n";
 import { registerDestructor } from "@ember/destroyable";
 import { fetchDonations, loadModalScript } from "../lib/btcpay";
+import { stripeDonationUrl } from "../lib/stripe";
 
 // The "do the thing" half of a donation method: a copyable value, an outbound
-// link, or the on-site BTCPay amount field. Lives apart from the card shell so
+// link, or an amount field (BTCPay on-site, or a Stripe Payment Link). Lives apart from the card shell so
 // the merged hero box and the sidebar block can use it without a card around it.
 export default class DonateMethodAction extends Component {
   @service currentUser;
@@ -29,8 +30,18 @@ export default class DonateMethodAction extends Component {
     return Boolean(this.args.useBtcpay);
   }
 
+  // BTCPay wins if both are set: it is the one with a server-side contract.
+  get useStripe() {
+    return !this.useBtcpay && Boolean(this.args.useStripe && this.args.url);
+  }
+
   get showUrl() {
-    return !this.useBtcpay && Boolean(this.args.url);
+    return !this.useBtcpay && !this.useStripe && Boolean(this.args.url);
+  }
+
+  // Stripe needs no account, so unlike BTCPay its form is shown to everyone.
+  get showAmountForm() {
+    return this.useStripe || (this.useBtcpay && this.currentUser);
   }
 
   // One overlay at a time: a second invoice would stack a second modal.
@@ -42,12 +53,6 @@ export default class DonateMethodAction extends Component {
   // reports over the theme's display-only currency setting.
   get currency() {
     return this.liveCurrency || settings.support_currency || "";
-  }
-
-  get formClasses() {
-    return this.args.stacked
-      ? "donate-option-card__btcpay --stacked"
-      : "donate-option-card__btcpay";
   }
 
   constructor(...args) {
@@ -129,6 +134,25 @@ export default class DonateMethodAction extends Component {
   }
 
   @action
+  submitAmount(event) {
+    return this.useStripe ? this.openStripe(event) : this.donate(event);
+  }
+
+  @action
+  openStripe(event) {
+    event?.preventDefault();
+
+    const url = stripeDonationUrl(this.args.url, {
+      amount: this.amount,
+      currency: settings.support_currency,
+      userId: this.currentUser?.id,
+    });
+
+    // Same tab behaviour as the plain outbound link this replaces.
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  @action
   async copyValue() {
     if (!this.args.copyValue) {
       return;
@@ -183,56 +207,58 @@ export default class DonateMethodAction extends Component {
       </button>
     {{/if}}
 
-    {{#if this.useBtcpay}}
-      {{#if this.currentUser}}
-        <form class={{this.formClasses}} {{on "submit" this.donate}}>
-          <span class="donate-option-card__amount">
-            <input
-              type="number"
-              inputmode="decimal"
-              min="0"
-              step="0.01"
-              value={{this.amount}}
-              disabled={{this.busy}}
-              placeholder={{i18n (themePrefix "btcpay.amount_placeholder")}}
-              aria-label={{i18n (themePrefix "btcpay.amount_label")}}
-              {{on "input" this.updateAmount}}
-            />
-            {{#if this.currency}}
-              <span
-                class="donate-option-card__amount-currency"
-                aria-hidden="true"
-              >
-                {{this.currency}}
-              </span>
-            {{/if}}
-          </span>
-
-          <button
-            type="submit"
-            class="btn-primary btn btn-icon-text"
+    {{#if this.showAmountForm}}
+      <form
+        class="donate-option-card__amount-form"
+        {{on "submit" this.submitAmount}}
+      >
+        <span class="donate-option-card__amount">
+          <input
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            value={{this.amount}}
             disabled={{this.busy}}
-          >
-            {{if
-              this.submitting
-              (i18n (themePrefix "btcpay.creating"))
-              @buttonText
-            }}
-          </button>
-        </form>
+            placeholder={{i18n (themePrefix "btcpay.amount_placeholder")}}
+            aria-label={{i18n (themePrefix "btcpay.amount_label")}}
+            {{on "input" this.updateAmount}}
+          />
+          {{#if this.currency}}
+            <span
+              class="donate-option-card__amount-currency"
+              aria-hidden="true"
+            >
+              {{this.currency}}
+            </span>
+          {{/if}}
+        </span>
 
-        {{#if this.error}}
-          <p class="donate-option-card__error" role="alert">{{this.error}}</p>
-        {{/if}}
-      {{else}}
         <button
-          type="button"
+          type="submit"
           class="btn-primary btn btn-icon-text"
-          {{on "click" this.showLogin}}
+          disabled={{this.busy}}
         >
-          {{i18n (themePrefix "btcpay.login_to_donate")}}
+          {{if
+            this.submitting
+            (i18n (themePrefix "btcpay.creating"))
+            @buttonText
+          }}
         </button>
+      </form>
+
+      {{#if this.error}}
+        <p class="donate-option-card__error" role="alert">{{this.error}}</p>
       {{/if}}
+    {{else if this.useBtcpay}}
+      {{! Logged out: /btcpay/donate.json answers 403, so offer the log-in. }}
+      <button
+        type="button"
+        class="btn-primary btn btn-icon-text"
+        {{on "click" this.showLogin}}
+      >
+        {{i18n (themePrefix "btcpay.login_to_donate")}}
+      </button>
     {{else if this.showUrl}}
       <a
         href={{@url}}

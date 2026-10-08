@@ -27,6 +27,7 @@ Instálalo como componente y añádelo a los temas que deban mostrarlo.
 - Métodos de donación con logotipos, enlaces y valores copiables (IBAN, alias, dirección…)
 - El campo de importe y el botón del método destacado van dentro de la propia caja de apoyo
 - Donaciones BTCPay dentro del sitio, con un campo de importe en lugar del enlace saliente
+- Donaciones con tarjeta mediante un Payment Link de Stripe, con el importe prerrellenado — sin claves secretas en el tema
 - Traducciones por método usando la lista de idiomas de Discourse
 - Destacados configurables en la cabecera, con traducción por elemento desde la misma lista
 - Objetivo y barra de progreso, alimentados por un ajuste manual o por los totales en vivo de BTCPay
@@ -34,15 +35,16 @@ Instálalo como componente y añádelo a los temas que deban mostrarlo.
 - Avatares de colaboradores, desde una lista manual, desde grupos y desde donantes reales de BTCPay
 - Diseños Classic, Minimal y Modern
 - Vistas Full, Compact, Minimal, Progress y Sidebar
+- Un bloque para el componente [Right Sidebar Blocks](https://github.com/discourse/discourse-right-sidebar-blocks) del equipo de Discourse
 - Envoltorios en publicaciones con `[wrap=donate*]`
 - Embed HTML genérico para Discourse Ads y otras ubicaciones que admitan HTML
 - Renderizado configurable en plugin outlets mediante `renderInOutlet`
-- Diseño adaptable y soporte de movimiento reducido
+- Se adapta a su propio ancho mediante container queries, así que encaja en una barra lateral, una publicación o un modal; soporte de movimiento reducido
 - Semántica de progreso accesible y controles de copia accesibles por teclado
 
 ## Métodos de donación
 
-Los métodos se configuran en el ajuste de objetos `donation_methods`. Un método puede marcarse como `featured`, lo que lo promueve a su propia sección sobre la cuadrícula.
+Los métodos se configuran en el ajuste de objetos `donation_methods`. Un método puede marcarse como `featured`, lo que coloca su campo de importe y su botón dentro de la caja de apoyo; el resto se listan debajo.
 
 ```yaml
 donation_methods:
@@ -62,8 +64,9 @@ donation_methods:
 | --- | --- |
 | `featured` | Usa este método para el campo de importe y el botón de la caja |
 | `name`, `description`, `button_text` | Texto de la tarjeta (obligatorio) |
-| `url` | URL de apoyo saliente. Se ignora cuando `use_btcpay` está activo |
+| `url` | URL de apoyo saliente, o el Payment Link de Stripe cuando `use_stripe` está activo. Se ignora cuando `use_btcpay` está activo |
 | `use_btcpay` | Cobra la donación en el sitio mediante el plugin de BTCPay |
+| `use_stripe` | Trata `url` como un Payment Link de Stripe y lo prerrellena con el importe introducido |
 | `icon` | Logotipo del proveedor, opcional (subida) |
 | `owner`, `provider` | Beneficiario y proveedor de pago opcionales, mostrados en la tarjeta |
 | `copy_label`, `copy_value` | Valor copiable de un clic, como un IBAN o una dirección |
@@ -100,22 +103,68 @@ Ambas vuelven a sus ajustes manuales si la petición falla o el plugin no está.
 
 El importe mínimo, la moneda de la donación y el límite de peticiones son ajustes del plugin, no de este componente.
 
+**Qué métodos de pago ofrece BTCPay no se configura aquí.** La factura muestra lo que esté activado en tu *tienda* de BTCPay: BTC on-chain, Lightning, Monero, etc. BTCPay Server no procesa tarjetas; para tarjetas, añade un método de Stripe a su lado.
+
+## Donaciones con Stripe
+
+Las donaciones con Stripe usan un [Payment Link](https://docs.stripe.com/payment-links), que no necesita clave secreta: la única forma de que Stripe viva en un componente de tema.
+
+1. En el panel de Stripe, crea un Payment Link para un producto con **Los clientes eligen cuánto pagar**. Opcionalmente, fija un importe predefinido, un mínimo y un máximo.
+2. Añade un método con ese enlace como `url` y `use_stripe` activado:
+
+```yaml
+donation_methods:
+  - name: "Tarjeta"
+    description: "Paga con tarjeta o cartera."
+    button_text: "Donar con tarjeta"
+    url: "https://buy.stripe.com/…"
+    use_stripe: true
+```
+
+El método muestra el mismo campo de importe que BTCPay. Al enviarlo, abre el enlace en una pestaña nueva con:
+
+- `prefilled_amount` — el importe en la unidad mínima de la moneda (10 EUR pasa a `1000`; las monedas sin decimales, como JPY, no se multiplican). La moneda sale de `support_currency`. El donante aún puede cambiar el importe en la página de Stripe, y Stripe aplica el mínimo y el máximo del propio enlace.
+- `client_reference_id=discourse-<id de usuario>` para donantes identificados, de modo que las donaciones se puedan cruzar con cuentas del foro en el panel de Stripe. Se usa el id numérico porque Stripe descarta en silencio los valores fuera de `A-Z a-z 0-9 _ -`, y los nombres de usuario pueden llevar puntos.
+
+En la página de Stripe se ofrecen tarjetas —y Apple Pay, Google Pay o Link si están activados en el enlace—. A diferencia de BTCPay, el formulario se muestra también a visitantes anónimos: Stripe no necesita cuenta en el foro.
+
+Dos omisiones deliberadas. El correo del donante **no** se prerrellena, porque viajaría en la URL y acabaría en el historial del navegador y en los registros. Y las donaciones de Stripe **no** cuentan en la barra de apoyo: la referencia anterior la fija el navegador, lo que vale para una etiqueta en el panel de Stripe pero no para acreditar a nadie. Contarlas requeriría una pieza en el servidor que reciba el webhook `checkout.session.completed` de Stripe, igual que el plugin de BTCPay genera su id de pedido en el servidor.
+
+Si un método tiene activados `use_btcpay` y `use_stripe` a la vez, gana BTCPay.
+
 ## Disposición
 
 La disposición por defecto es una caja, después la barra de progreso y después el resto de métodos:
 
 ```
-┌─ caja de apoyo ────────────────────────────┐
-│ ♥  Sostener nuestra comunidad              │
-│    Los proyectos financiados…   [ 10.00  ] │
-│    [sin anuncios] [comunidad]   [  Donar ] │
-└────────────────────────────────────────────┘
-  120 EUR de 200 EUR · Mensual          60%
-  ▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-┌ PayPal ──────────┐ ┌ Transferencia ──────┐
+┌─ caja de apoyo ────────────────────────────────────┐
+│ ♥  Sostener nuestra comunidad                      │
+│    Los proyectos financiados por    ┌───────┐      │
+│    la comunidad dependen de…        │ 10 EUR│      │
+│    [sin anuncios] [comunidad]       └───────┘      │
+│                                     [   Donar   ]  │
+└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────┐
+│ 120 EUR de 200 EUR · Mensual                  60%  │
+│ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
+└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────┐
+│ ⬡  PayPal · paypal.me               [ Abrir PayPal]│
+│    Apoya a la comunidad con PayPal.                │
+├────────────────────────────────────────────────────┤
+│ ⬡  Tarjeta · Stripe       [ 10 EUR ][Donar tarjeta]│
+│    Paga con tarjeta o cartera.                     │
+├────────────────────────────────────────────────────┤
+│ ⬡  Transferencia · Caja Rural                      │
+│    ┌ IBAN  ES00 0000 0000 0000  ⧉ ┐               │
+└────────────────────────────────────────────────────┘
 ```
 
-La caja es la cabecera y el método destacado en una sola pieza: el texto a la izquierda y el campo de importe y el botón de ese método a la derecha. Los demás métodos siguen en la cuadrícula. El icono lo define `support_icon` y es el único icono de la disposición.
+La caja es la cabecera y el método destacado en una sola pieza: el texto a la izquierda y el campo de importe y el botón de ese método a la derecha. Los demás métodos son filas de la lista inferior. Todas las filas comparten una misma plantilla —icono, texto, acción—, así que un método con beneficiario, proveedor o valor copiable queda alineado exactamente igual que uno sin ellos. Beneficiario y proveedor van en la línea del nombre; el valor copiable, en la columna de texto.
+
+La disposición responde a su propio ancho y no al de la ventana (container queries). Por debajo de unos 36rem, la acción de la caja pasa bajo su texto y la de cada fila bajo el suyo, de modo que se lee bien en una columna lateral estrecha dentro de una pantalla ancha, donde los breakpoints de viewport seguirían diciendo «escritorio».
+
+En las ubicaciones independientes, la caja, la barra y la lista son tres superficies redondeadas con los mismos bordes. En el modal quedan a ras, porque el modal ya recorta sus propias esquinas. El icono lo define `support_icon` y es el único icono de la disposición.
 
 ## Barra de apoyo
 
@@ -185,6 +234,20 @@ Ejemplos: `above-main-container`, `before-topic-list`, `after-topic-list`, `topi
 
 La vista y el diseño del outlet se configuran de forma independiente de los valores globales.
 
+## Barra lateral derecha
+
+El componente [Right Sidebar Blocks](https://github.com/discourse/discourse-right-sidebar-blocks) del equipo de Discourse muestra una columna de bloques junto a las listas de temas. Este componente incluye uno para ella, `donate-sidebar-block`, que muestra la vista `sidebar`.
+
+Instala Right Sidebar Blocks y añade el bloque a su ajuste `blocks`:
+
+```json
+[{ "name": "donate-sidebar-block" }]
+```
+
+Ordénalo allí junto a los demás bloques. Dónde aparece la columna lo decide Right Sidebar Blocks —su ajuste `show_in_routes`, solo en rutas de listas de temas y nunca en móvil—. Los ajustes de audiencia y ruta de este componente se siguen aplicando encima, así que `show_for_anon`, `trust_level`, `excluded_groups` y `url_must_contain` funcionan igual que en los outlets. La barra de apoyo se muestra si `support_bar_in_outlets` está activo.
+
+Right Sidebar Blocks busca los bloques por nombre a través del resolver, que toma el primer módulo cuya ruta termine en `components/<nombre>`. Por eso el nombre es largo y específico; mantenlo así.
+
 ## Vistas y diseños
 
 El diseño controla el lenguaje visual:
@@ -199,7 +262,7 @@ La vista controla cuánto contenido se muestra:
 - `compact` — menos adorno para ubicaciones estrechas
 - `minimal` — presentación centrada en los métodos
 - `progress` — solo objetivo y progreso
-- `sidebar` — un bloque compacto hecho a propósito para outlets de la barra lateral: icono, título corto, barra fina, campo de importe y botón. No es la caja completa reducida: prescinde del texto de cabecera y de la cuadrícula de métodos porque no caben.
+- `sidebar` — un bloque compacto hecho a propósito: icono, título corto, barra fina, campo de importe y botón. No es la caja completa reducida: prescinde del texto de cabecera y de la lista de métodos porque no caben. Lo usa el [bloque de la barra lateral derecha](#barra-lateral-derecha) y se puede elegir para cualquier outlet.
 
 Diseño y vista son ortogonales a propósito: cualquier vista funciona con cualquier diseño.
 

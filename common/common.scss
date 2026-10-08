@@ -1,5 +1,3 @@
-@use "lib/viewport";
-
 // Close
 .donate-modal__close {
   position: fixed;
@@ -49,6 +47,13 @@
     padding: 0 !important;
     overflow-y: auto;
     overscroll-behavior-y: contain;
+  }
+
+  // Everything below is sized by the component's own width, not the
+  // window's: the same markup sits in a modal, a full-width outlet, a post
+  // and a narrow sidebar column, where viewport breakpoints lie.
+  .donate-component {
+    container: donate / inline-size;
   }
 
   .donate-modal__content {
@@ -311,42 +316,40 @@
 
   .donate-modal__inner {
     margin: 0 auto;
-    padding: clamp(1.25rem, 3vw, 1.8rem) clamp(1.1rem, 3vw, 1.8rem) 1.35rem;
+    padding: 1.1rem var(--donate-gutter) 1.35rem;
   }
 
+  // -----------------------------------------------------------------------
+  // Methods list. Every row shares one three-column template — icon, text,
+  // action — so no mix of filled-in fields can push a row out of line.
+  // -----------------------------------------------------------------------
   .donate-modal__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--primary-low);
+    border-radius: var(--donate-radius);
+    background: var(--secondary);
   }
 
   .donate-option-card {
     display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    align-items: start;
-    gap: 0.75rem;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
     min-width: 0;
-    padding: 0.85rem;
-    border: 1px solid var(--primary-low);
-    border-radius: var(--donate-radius);
-    background: var(--secondary);
+    padding: 0.85rem 1rem;
     color: var(--primary);
-    text-align: left;
-    box-shadow: none;
-    transition:
-      border-color 0.16s ease,
-      background 0.16s ease,
-      transform 0.16s ease;
+    text-align: start;
+    transition: background 0.16s ease;
+  }
+
+  .donate-option-card + .donate-option-card {
+    border-top: 1px solid var(--primary-low);
   }
 
   .donate-option-card:hover {
-    border-color: var(--primary-low-mid);
-    background: rgb(var(--primary-rgb), 0.04);
-    transform: translateY(-1px);
-  }
-
-  .donate-option-card__top {
-    display: contents;
+    background: var(--primary-very-low);
   }
 
   .donate-option-card__icon {
@@ -381,35 +384,51 @@
     object-fit: contain;
   }
 
-  .donate-option-card__identity {
-    grid-column: 2;
-    min-width: 0;
-    margin-top: 0;
-  }
-
-  .donate-option-card__content {
-    grid-column: 2;
+  .donate-option-card__body {
     min-width: 0;
   }
 
-  .donate-option-card__content h3 {
+  .donate-option-card__body h3 {
     text-wrap: balance;
-    margin: 0 0 0.18rem;
-    font-size: var(--font-up-1);
-    line-height: 1.2;
+    margin: 0 0 0.15rem;
+    font-size: var(--font-0);
+    font-weight: 700;
+    line-height: 1.25;
   }
 
-  .donate-option-card__content p {
-    text-wrap: pretty;
-    margin: 0 0 0.5rem;
+  .donate-option-card__meta {
     color: var(--donate-muted);
+    font-size: var(--font-down-1);
+    font-weight: 500;
+  }
+
+  .donate-option-card__body p {
+    text-wrap: pretty;
+    margin: 0;
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
     line-height: 1.4;
   }
 
+  .donate-option-card__body .donate-option-card__copy {
+    margin: 0.55rem 0 0;
+  }
+
+  .donate-option-card__action {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .donate-option-card__action .btn-primary {
+    justify-content: center;
+    white-space: nowrap;
+  }
+
   // -----------------------------------------------------------------------
-  // Copy-to-clipboard chip — shared by the featured account card and every
-  // method card in the grid below. `.--featured` only changes the sizing;
-  // layout, hover and the "copied" state are defined once, here.
+  // Copy-to-clipboard chip — sits in a row's text column, or in the box's
+  // action column for a featured method that only has a value to copy.
+  // Layout, hover and the "copied" state are defined once, here.
   // -----------------------------------------------------------------------
   .donate-option-card__copy {
     display: flex;
@@ -501,24 +520,20 @@
     color: var(--secondary);
   }
 
-  .donate-option-card__content a.btn-primary {
-    width: 100%;
-    justify-content: center;
-    margin-top: 0.25rem;
-  }
-
   // -----------------------------------------------------------------------
-  // On-site BTCPay donation: amount field + submit, in place of the outbound
-  // link. Falls back to the link above for every non-BTCPay method.
+  // Amount form, shared by BTCPay and Stripe. Donations are a few digits, so
+  // the field is sized for that plus the currency suffix instead of being
+  // stretched across whatever room is left; the button takes the rest.
   // -----------------------------------------------------------------------
-  .donate-option-card__btcpay {
+  .donate-option-card__amount-form {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     align-items: stretch;
-    margin-top: 0.25rem;
+    margin: 0;
 
     .btn-primary {
-      flex: 0 0 auto;
+      flex: 1 0 auto;
       justify-content: center;
     }
   }
@@ -526,16 +541,14 @@
   .donate-option-card__amount {
     position: relative;
     display: flex;
-    flex: 1 1 auto;
-    min-width: 0;
+    flex: 0 0 auto;
     align-items: center;
 
     input {
-      width: 100%;
-      min-width: 0;
+      inline-size: 6rem;
       height: 100%;
       margin: 0;
-      padding-right: 3rem;
+      padding-inline-end: 0.6rem;
       border: 1px solid rgb(var(--tertiary-rgb), 0.28);
       border-radius: 0.7rem;
       background: rgb(var(--tertiary-rgb), 0.06);
@@ -547,22 +560,19 @@
     }
   }
 
+  // Room for the suffix only when there is one to show.
+  .donate-option-card__amount:has(.donate-option-card__amount-currency) input {
+    inline-size: 7.5rem;
+    padding-inline-end: 3rem;
+  }
+
   .donate-option-card__amount-currency {
     position: absolute;
-    right: 0.7rem;
+    inset-inline-end: 0.7rem;
     color: var(--donate-muted);
     font-size: var(--font-down-1);
     font-weight: 650;
     pointer-events: none;
-  }
-
-  .donate-option-card__btcpay.--stacked {
-    flex-direction: column;
-    align-items: stretch;
-
-    .btn-primary {
-      width: 100%;
-    }
   }
 
   .donate-option-card__error {
@@ -571,21 +581,11 @@
     font-size: var(--font-down-1);
   }
 
-  @include viewport.until(sm) {
-    .donate-option-card__btcpay {
-      flex-direction: column;
-
-      .btn-primary {
-        width: 100%;
-      }
-    }
-  }
-
-  @include viewport.until(sm) {
+  @container donate (width < 36rem) {
     .donate-modal__hero {
       grid-template-columns: auto minmax(0, 1fr);
       min-height: 0;
-      padding: 1.7rem 1.05rem 1.35rem;
+      padding: 1.5rem 1.1rem 1.3rem;
     }
 
     .donate-modal__hero-icon {
@@ -607,16 +607,21 @@
       min-width: 0;
     }
 
-    .donate-modal__grid {
-      grid-template-columns: 1fr;
+    // The action drops under the text instead of squeezing it.
+    .donate-option-card {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+    }
+
+    .donate-option-card__action {
+      grid-column: 2;
+      justify-content: flex-start;
     }
   }
 
-  @include viewport.until(xs) {
+  @container donate (width < 24rem) {
     .donate-modal__hero {
       grid-template-columns: 1fr;
-      padding-right: 0.9rem;
-      padding-left: 0.9rem;
+      padding-inline: 0.9rem;
     }
 
     .donate-modal__hero-icon {
@@ -1026,24 +1031,8 @@
       padding: 0.9rem;
     }
 
-    .donate-modal__grid {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-    }
-
     .donate-option-card {
-      display: grid;
-      grid-template-columns: 2.5rem minmax(0, 1fr);
-      gap: 0.75rem;
-      padding: 0.7rem;
-      border-radius: 0.75rem;
-      background: var(--secondary);
-      box-shadow: none;
-      transform: none;
-    }
-
-    .donate-option-card__top {
-      display: contents;
+      padding: 0.7rem 0.85rem;
     }
 
     .donate-option-card__icon {
@@ -1053,19 +1042,8 @@
       box-shadow: none;
     }
 
-    .donate-option-card__identity,
-    .donate-option-card__content {
-      grid-column: 2;
-    }
-
-    .donate-option-card__content h3 {
-      margin-bottom: 0.15rem;
-      font-size: var(--font-up-1);
-    }
-
-    .donate-option-card__content p {
-      margin-bottom: 0.45rem;
-      font-size: var(--font-down-1);
+    .donate-option-card__body h3 {
+      margin-bottom: 0.1rem;
     }
 
     .donate-option-card__copy {
@@ -1080,12 +1058,6 @@
       width: 1.7rem;
       height: 1.7rem;
       flex-basis: 1.7rem;
-    }
-
-    .donate-option-card__content a.btn-primary {
-      width: auto;
-      min-width: 0;
-      margin-top: 0.15rem;
     }
   }
 
@@ -1132,22 +1104,12 @@
       font-size: clamp(2rem, 5vw, 3rem);
     }
 
-    .donate-modal__hero-pills {
-      grid-column: 1;
-    }
-
     .donate-modal__inner {
       padding: clamp(1.2rem, 3vw, 2rem);
     }
 
-    .donate-option-card {
-      border-radius: 1rem;
+    .donate-modal__grid {
       box-shadow: 0 16px 42px -34px rgb(var(--always-black-rgb), 0.55);
-    }
-
-    .donate-option-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 22px 45px -34px rgb(var(--always-black-rgb), 0.62);
     }
   }
 
@@ -1179,7 +1141,7 @@
     }
 
     .donate-option-card {
-      padding: 0.7rem;
+      padding: 0.65rem 0.85rem;
     }
   }
 
@@ -1193,11 +1155,6 @@
 
     .donate-modal__inner {
       padding: 0.8rem;
-    }
-
-    .donate-modal__grid {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
     }
   }
 
@@ -1312,18 +1269,6 @@
     height: 0.4rem;
   }
 
-  .donate-option-card__btcpay {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.4rem;
-    margin: 0;
-
-    .btn-primary {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-
   .donate-option-card__amount input {
     height: 2.2rem;
   }
@@ -1346,7 +1291,7 @@
 .donate-embed {
   .donate-option-card__amount input:focus-visible,
   .donate-option-card__copy:focus-visible,
-  .donate-option-card__content .btn:focus-visible,
+  .donate-option-card__action .btn:focus-visible,
   .donate-modal__hero-action .btn:focus-visible,
   .donate-sidebar .btn:focus-visible {
     outline: 2px solid var(--tertiary);
@@ -1369,6 +1314,11 @@
     margin-top: 0.6rem;
     border: 1px solid var(--primary-low);
     border-radius: var(--donate-radius);
+  }
+
+  // Same edges as the box and the bar, so the three surfaces stack flush.
+  .donate-modal__inner {
+    padding: 0.6rem 0 0;
   }
 }
 

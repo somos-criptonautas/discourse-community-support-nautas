@@ -133,7 +133,7 @@ export default class DonateContent extends Component {
               @copyLabel={{this.featuredMethod.copy_label}}
               @copyValue={{this.featuredMethod.copy_value}}
               @useBtcpay={{this.featuredMethod.use_btcpay}}
-              @stacked={{true}}
+              @useStripe={{this.featuredMethod.use_stripe}}
             />
           {{/if}}
         </section>
@@ -180,7 +180,7 @@ export default class DonateContent extends Component {
                 @copyLabel={{this.featuredMethod.copy_label}}
                 @copyValue={{this.featuredMethod.copy_value}}
                 @useBtcpay={{this.featuredMethod.use_btcpay}}
-                @stacked={{true}}
+                @useStripe={{this.featuredMethod.use_stripe}}
               />
             </div>
           {{/if}}
@@ -192,7 +192,7 @@ export default class DonateContent extends Component {
 
         {{#if this.otherDonationMethods.length}}
           <div class="donate-modal__inner">
-            <div class="donate-modal__grid">
+            <div class="donate-modal__grid" role="list">
               {{#each this.otherDonationMethods as |method|}}
                 <DonateOptionCard
                   @name={{method.name}}
@@ -205,6 +205,7 @@ export default class DonateContent extends Component {
                   @copyLabel={{method.copy_label}}
                   @copyValue={{method.copy_value}}
                   @useBtcpay={{method.use_btcpay}}
+                  @useStripe={{method.use_stripe}}
                 />
               {{/each}}
             </div>
