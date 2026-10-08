@@ -11,6 +11,10 @@ module(
     let previous;
 
     hooks.beforeEach(function () {
+      // Rendering tests build a bare user with no trust level; real users
+      // always carry one, and trust_level 0 is the setting's default.
+      this.currentUser.trust_level = 0;
+
       previous = {
         show_for_members: settings.show_for_members,
         show_for_anon: settings.show_for_anon,
