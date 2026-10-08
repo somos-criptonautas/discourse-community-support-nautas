@@ -151,8 +151,7 @@ The default placement is one box followed by the progress bar and then the remai
 │    on people who find them useful.  │ 10 EUR│      │
 │    [no ads] [community funded]      └───────┘      │
 │                                     [  Donate  ]   │
-└────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────┐
+│ ─────────────────────────────────────────────────  │
 │ 120 EUR of 200 EUR · Monthly                  60%  │
 │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
 └────────────────────────────────────────────────────┘
@@ -252,7 +251,7 @@ Install Right Sidebar Blocks, then add the block to its `blocks` setting:
 [{ "name": "donate-sidebar-block" }]
 ```
 
-Order it among the other blocks there. Where the column appears is Right Sidebar Blocks' business — its `show_in_routes` setting, topic-list routes only, never on mobile. This component's own audience and route settings still apply on top, so `show_for_anon`, `trust_level`, `excluded_groups` and `url_must_contain` work the same as for outlets. The support bar is shown when `support_bar_in_outlets` is on.
+Order it among the other blocks there. Where the column appears is Right Sidebar Blocks' business — its `show_in_routes` setting, topic-list routes only, never on mobile. This component only adds who may see it — `show_for_members`, `show_for_anon`, `trust_level`, `excluded_groups`. It does not apply `url_must_contain` or `display_on_homepage` here: the route is Right Sidebar Blocks' to decide, and checking both hid the block on pages where it had been placed. The support bar is shown when `support_bar_in_outlets` is on.
 
 Right Sidebar Blocks looks blocks up by name through the resolver, which takes the first module whose path ends in `components/<name>`. That is why the name is long and specific; keep it that way.
 

@@ -151,8 +151,7 @@ La disposición por defecto es una caja, después la barra de progreso y despué
 │    la comunidad dependen de…        │ 10 EUR│      │
 │    [sin anuncios] [comunidad]       └───────┘      │
 │                                     [   Donar   ]  │
-└────────────────────────────────────────────────────┘
-┌────────────────────────────────────────────────────┐
+│ ─────────────────────────────────────────────────  │
 │ 120 EUR de 200 EUR · Mensual                  60%  │
 │ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
 └────────────────────────────────────────────────────┘
@@ -252,7 +251,7 @@ Instala Right Sidebar Blocks y añade el bloque a su ajuste `blocks`:
 [{ "name": "donate-sidebar-block" }]
 ```
 
-Ordénalo allí junto a los demás bloques. Dónde aparece la columna lo decide Right Sidebar Blocks —su ajuste `show_in_routes`, solo en rutas de listas de temas y nunca en móvil—. Los ajustes de audiencia y ruta de este componente se siguen aplicando encima, así que `show_for_anon`, `trust_level`, `excluded_groups` y `url_must_contain` funcionan igual que en los outlets. La barra de apoyo se muestra si `support_bar_in_outlets` está activo.
+Ordénalo allí junto a los demás bloques. Dónde aparece la columna lo decide Right Sidebar Blocks —su ajuste `show_in_routes`, solo en rutas de listas de temas y nunca en móvil—. Este componente solo añade quién puede verlo —`show_for_members`, `show_for_anon`, `trust_level`, `excluded_groups`—. Aquí no aplica `url_must_contain` ni `display_on_homepage`: la ruta la decide Right Sidebar Blocks, y comprobar ambas cosas ocultaba el bloque en páginas donde se había colocado. La barra de apoyo se muestra si `support_bar_in_outlets` está activo.
 
 Right Sidebar Blocks busca los bloques por nombre a través del resolver, que toma el primer módulo cuya ruta termine en `components/<nombre>`. Por eso el nombre es largo y específico; mantenlo así.
 

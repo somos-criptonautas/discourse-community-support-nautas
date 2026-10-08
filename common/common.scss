@@ -341,15 +341,10 @@
     padding: 0.85rem 1rem;
     color: var(--primary);
     text-align: start;
-    transition: background 0.16s ease;
   }
 
   .donate-option-card + .donate-option-card {
     border-top: 1px solid var(--primary-low);
-  }
-
-  .donate-option-card:hover {
-    background: var(--primary-very-low);
   }
 
   .donate-option-card__icon {
@@ -1325,4 +1320,47 @@
 .donate-embed .donate-modal__hero-copy h2,
 .donate-embed .donate-modal__hero-copy p {
   text-wrap: pretty;
+}
+
+// -------------------------------------------------------------------------//
+//  Progress inside the box: below the copy and the action, across the full
+//  width, restyled light-on-dark for the box's tertiary background. Appended
+//  last so it beats the standalone bar's surface and layout rules.
+// -------------------------------------------------------------------------//
+.d-modal.donate-modal,
+.donate-embed {
+  .donate-modal__hero .donate-support-bar {
+    grid-column: 1 / -1;
+    margin: 0.4rem 0 0;
+    padding: 0.9rem 0 0;
+    border: 0;
+    border-top: 1px solid rgb(var(--secondary-rgb), 0.22);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .donate-modal__hero .donate-support-bar__figures strong,
+  .donate-modal__hero .donate-support-bar__percentage {
+    color: var(--secondary);
+  }
+
+  .donate-modal__hero .donate-support-bar__figures > span {
+    color: rgb(var(--secondary-rgb), 0.78);
+  }
+
+  .donate-modal__hero .donate-support-bar__track.--track-tertiary {
+    background: rgb(var(--secondary-rgb), 0.22);
+  }
+
+  .donate-modal__hero .donate-support-bar__fill.--fill-tertiary {
+    background: var(--secondary);
+  }
+
+  .donate-modal__hero .donate-support-bar__skeleton {
+    background: rgb(var(--secondary-rgb), 0.3);
+  }
+
+  .donate-modal__hero .donate-supporters__more-button {
+    color: var(--secondary);
+  }
 }

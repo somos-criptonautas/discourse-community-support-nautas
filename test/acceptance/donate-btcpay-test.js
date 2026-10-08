@@ -137,6 +137,13 @@ acceptance("Community Support | donation box", function (needs) {
       .doesNotExist("the bar carries no icon of its own");
   });
 
+  test("the progress sits inside the box", async function (assert) {
+    await visit("/");
+
+    assert.dom(".donate-modal__hero .donate-support-bar").exists();
+    assert.dom(".donate-support-bar").exists({ count: 1 }, "and only there");
+  });
+
   test("the support bar reads the live total and keeps the figures together", async function (assert) {
     await visit("/");
 
@@ -241,6 +248,18 @@ acceptance("Community Support | sidebar view", function (needs) {
     assert
       .dom(".donate-modal__grid")
       .doesNotExist("no method grid in the sidebar");
+  });
+});
+
+acceptance("Community Support | progress view", function (needs) {
+  needs.user();
+  setup(needs, { outlet_view: "progress" });
+
+  test("views that hide the box keep the bar on its own", async function (assert) {
+    await visit("/");
+
+    assert.dom(".donate-support-bar").exists();
+    assert.dom(".donate-modal__hero .donate-support-bar").doesNotExist();
   });
 });
 

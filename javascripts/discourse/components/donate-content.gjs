@@ -27,6 +27,17 @@ export default class DonateContent extends Component {
     return settings.support_bar_enabled && (this.args.showSupportBar ?? true);
   }
 
+  // The box carries the progress, so it reads as presentation + progress and
+  // the list below as the ways to give. Views that hide the box keep the bar
+  // on its own, or it would disappear with it.
+  get barInBox() {
+    return this.showSupportBar && !["minimal", "progress"].includes(this.view);
+  }
+
+  get barOutsideBox() {
+    return this.showSupportBar && !this.barInBox;
+  }
+
   get supportIcon() {
     return settings.support_icon || "heart";
   }
@@ -184,9 +195,13 @@ export default class DonateContent extends Component {
               />
             </div>
           {{/if}}
+
+          {{#if this.barInBox}}
+            <DonateSupportBar @layout={{@supportBarLayout}} />
+          {{/if}}
         </section>
 
-        {{#if this.showSupportBar}}
+        {{#if this.barOutsideBox}}
           <DonateSupportBar @layout={{@supportBarLayout}} />
         {{/if}}
 

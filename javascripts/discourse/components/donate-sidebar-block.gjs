@@ -1,6 +1,6 @@
 import Component from "@glimmer/component";
 import { service } from "@ember/service";
-import { shouldRenderAutomatically } from "../lib/visibility";
+import { audienceAllowed } from "../lib/visibility";
 import DonateContent from "./donate-content";
 
 // A block for the core team's discourse-right-sidebar-blocks component, which
@@ -12,11 +12,13 @@ import DonateContent from "./donate-content";
 // The .donate-embed wrapper is not decoration — every base style in this
 // component is scoped under it.
 export default class DonateSidebarBlock extends Component {
-  @service router;
   @service currentUser;
 
+  // Who sees it, not where: Right Sidebar Blocks already decides which pages
+  // show its column (show_in_routes). Checking url_must_contain as well
+  // hid the block on pages where the admin had placed it.
   get shouldRender() {
-    return shouldRenderAutomatically(this.router, this.currentUser);
+    return audienceAllowed(this.currentUser);
   }
 
   get design() {

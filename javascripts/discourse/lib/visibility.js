@@ -57,14 +57,18 @@ export function isInExcludedGroup(currentUser) {
   );
 }
 
+// Who may see the component, wherever it is placed.
+export function audienceAllowed(currentUser) {
+  return (
+    displayForUser(currentUser) &&
+    meetsTrustLevel(currentUser) &&
+    !isInExcludedGroup(currentUser)
+  );
+}
+
 // Everything the automatic placements (plugin outlets, generic embeds) must
 // satisfy. Post embeds deliberately skip this: a [wrap=donate] block was put
 // on that page on purpose by whoever wrote the post.
 export function shouldRenderAutomatically(router, currentUser) {
-  return (
-    displayForUser(currentUser) &&
-    meetsTrustLevel(currentUser) &&
-    !isInExcludedGroup(currentUser) &&
-    matchesRoute(router)
-  );
+  return audienceAllowed(currentUser) && matchesRoute(router);
 }
