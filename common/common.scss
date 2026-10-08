@@ -266,9 +266,12 @@
     gap: 0.5rem;
   }
 
-  .donate-modal__hero-action .donate-option-card__amount input {
+  .donate-modal__hero-action .donate-option-card__amount-form {
     border-color: rgb(var(--secondary-rgb), 0.35);
     background: rgb(var(--secondary-rgb), 0.14);
+  }
+
+  .donate-modal__hero-action .donate-option-card__amount input {
     color: var(--secondary);
   }
 
@@ -276,9 +279,11 @@
     color: rgb(var(--secondary-rgb), 0.65);
   }
 
-  .donate-modal__hero-action .donate-option-card__amount input:focus-visible {
+  .donate-modal__hero-action
+    .donate-option-card__amount-form:has(:focus-visible) {
     border-color: var(--secondary);
     background: rgb(var(--secondary-rgb), 0.2);
+    outline-color: var(--secondary);
   }
 
   .donate-modal__hero-action .donate-option-card__amount-currency {
@@ -287,7 +292,7 @@
 
   .donate-modal__hero-action .btn-primary {
     justify-content: center;
-    border: 1px solid transparent;
+    border: 0;
     background: var(--secondary);
     color: var(--tertiary);
     font-weight: 700;
@@ -516,49 +521,59 @@
   }
 
   // -----------------------------------------------------------------------
-  // Amount form, shared by BTCPay and Stripe. Donations are a few digits, so
-  // the field is sized for that plus the currency suffix instead of being
-  // stretched across whatever room is left; the button takes the rest.
+  // Amount form, shared by BTCPay and Stripe: one joined bar, the field on
+  // the left and the button on the right, like a search box. Donations are a
+  // few digits, so the field is sized for that and the button takes the rest.
   // -----------------------------------------------------------------------
   .donate-option-card__amount-form {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
     align-items: stretch;
+    overflow: hidden;
     margin: 0;
+    border: 1px solid rgb(var(--tertiary-rgb), 0.28);
+    border-radius: 0.7rem;
+    background: rgb(var(--tertiary-rgb), 0.06);
 
     .btn-primary {
       flex: 1 0 auto;
+      gap: 0.4rem;
       justify-content: center;
+      margin: 0;
+      border-radius: 0;
     }
+  }
+
+  // The ring goes round the whole bar: an inner outline would be clipped.
+  .donate-option-card__amount-form:has(:focus-visible) {
+    border-color: rgb(var(--tertiary-rgb), 0.7);
   }
 
   .donate-option-card__amount {
     position: relative;
     display: flex;
-    flex: 0 0 auto;
+    flex: 0 1 6rem;
+    min-width: 4.5rem;
     align-items: center;
 
     input {
-      inline-size: 6rem;
+      inline-size: 100%;
       height: 100%;
       margin: 0;
-      padding-inline-end: 0.6rem;
-      border: 1px solid rgb(var(--tertiary-rgb), 0.28);
-      border-radius: 0.7rem;
-      background: rgb(var(--tertiary-rgb), 0.06);
+      padding-inline: 0.75rem 0.6rem;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       font-variant-numeric: tabular-nums;
-    }
-
-    input:focus-visible {
-      border-color: rgb(var(--tertiary-rgb), 0.7);
     }
   }
 
   // Room for the suffix only when there is one to show.
-  .donate-option-card__amount:has(.donate-option-card__amount-currency) input {
-    inline-size: 7.5rem;
-    padding-inline-end: 3rem;
+  .donate-option-card__amount:has(.donate-option-card__amount-currency) {
+    flex-basis: 7.5rem;
+
+    input {
+      padding-inline-end: 3rem;
+    }
   }
 
   .donate-option-card__amount-currency {
@@ -1284,13 +1299,19 @@
 // -------------------------------------------------------------------------//
 .d-modal.donate-modal,
 .donate-embed {
-  .donate-option-card__amount input:focus-visible,
+  .donate-option-card__amount-form:has(:focus-visible),
   .donate-option-card__copy:focus-visible,
   .donate-option-card__action .btn:focus-visible,
   .donate-modal__hero-action .btn:focus-visible,
   .donate-sidebar .btn:focus-visible {
     outline: 2px solid var(--tertiary);
     outline-offset: 2px;
+  }
+
+  // Inside the bar the ring is drawn on the bar itself (above).
+  .donate-option-card__amount-form input:focus-visible,
+  .donate-option-card__amount-form .btn:focus-visible {
+    outline: none;
   }
 }
 

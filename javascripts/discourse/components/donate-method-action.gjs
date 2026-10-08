@@ -280,6 +280,7 @@ export default class DonateMethodAction extends Component {
             (i18n (themePrefix "btcpay.creating"))
             @buttonText
           }}
+          {{#unless this.submitting}}{{icon "arrow-right"}}{{/unless}}
         </button>
       </form>
 
