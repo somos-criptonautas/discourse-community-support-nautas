@@ -20,12 +20,13 @@ export function matchesRoute(router) {
     return false;
   }
 
-  return configuredPaths.split("|").some((allowedPath) => {
-    if (allowedPath.slice(-1) === "*") {
-      return path.indexOf(allowedPath.slice(0, -1)) === 0;
-    }
-    return path === allowedPath;
-  });
+  // The setting is named "must contain", so a value matches anywhere in the
+  // address. A lone "*" is every page; a trailing "*" from the old prefix
+  // syntax is dropped, since containing the prefix already covers it.
+  return configuredPaths
+    .split("|")
+    .filter(Boolean)
+    .some((value) => value === "*" || path.includes(value.replace(/\*$/, "")));
 }
 
 export function displayForUser(currentUser) {

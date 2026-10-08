@@ -267,6 +267,13 @@ acceptance("Community Support | url_must_contain", function (needs) {
   needs.user();
   setup(needs, { display_on_homepage: false, url_must_contain: "/faq" });
 
+  test("a value matches anywhere in the address, not only exactly", async function (assert) {
+    settings.url_must_contain = "atest";
+    await visit("/latest");
+
+    assert.dom(".donate-component").exists("/latest contains 'atest'");
+  });
+
   test("a non-matching route renders nothing at all", async function (assert) {
     await visit("/");
 

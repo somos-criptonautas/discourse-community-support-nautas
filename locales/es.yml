@@ -36,7 +36,7 @@ es:
       show_for_members: "Mostrar el activador de donaciones a quienes tienen sesión iniciada"
       show_for_anon: "Mostrar el activador de donaciones a las visitas anónimas"
       display_on_homepage: "Mostrar el activador de donaciones en la portada configurada"
-      url_must_contain: "Mostrar el activador de donaciones en las rutas que coincidan. Con <code>*</code> al final como comodín"
+      url_must_contain: "Mostrar los widgets de apoyo solo en páginas cuya dirección contenga alguno de estos valores, por ejemplo <code>/c/donaciones</code> o <code>/t/</code>. Usa <code>*</code> para todas las páginas. La portada sigue además el ajuste <i>mostrar en la portada</i>."
       trust_level: "Nivel de confianza mínimo para mostrar el activador de donaciones"
       modal_size: "Ancho del modal de apoyo"
       excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"

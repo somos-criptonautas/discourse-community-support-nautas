@@ -36,7 +36,7 @@ en:
       show_for_members: "Display the donation trigger for logged-in users"
       show_for_anon: "Display the donation trigger for anonymous users"
       display_on_homepage: "Display the donation trigger on the configured homepage"
-      url_must_contain: "Display the donation trigger on matching paths. Add <code>*</code> to the end for a wildcard"
+      url_must_contain: "Show the support widgets only on pages whose address contains one of these, for example <code>/c/donations</code> or <code>/t/</code>. Use <code>*</code> for every page. The homepage also follows <i>display on homepage</i>."
       trust_level: "Minimum trust level required to display the donation trigger"
       modal_size: "Width of the support modal"
       excluded_groups: "Groups that should not see the automatic support trigger, outlet widgets or generic embeds; contextual [wrap=donate] blocks and the manual #donate link remain available"
