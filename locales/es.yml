@@ -98,7 +98,7 @@ es:
               description: "Cobrar la donación en el sitio mediante el plugin de suscripciones BTCPay en lugar de enlazar fuera. Muestra un campo de importe y un botón de donar; la URL se ignora."
             use_stripe:
               label: "Donación con Stripe"
-              description: "Trata la URL como un Payment Link de Stripe configurado para que el cliente elija el importe. Muestra un campo de importe y lo rellena en la página de Stripe; allí se ofrecen tarjetas y las carteras activadas en el enlace. Se ignora si la donación BTCPay está activa."
+              description: "Donaciones con tarjeta con un campo de importe. Los miembros identificados pagan con el método Stripe de BTCPay cuando el plugin de BTCPay tiene activados los pagos con tarjeta, así que la donación se acredita igual que una en cripto. Los demás usan la URL como Payment Link de Stripe en el que el cliente elige el importe; deja la URL vacía para ofrecer tarjeta solo a miembros. Se ignora si la donación BTCPay está activa."
             url:
               label: "URL"
               description: "URL completa de apoyo"

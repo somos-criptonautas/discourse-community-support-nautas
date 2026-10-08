@@ -98,7 +98,7 @@ en:
               description: "Take the donation on-site through the BTCPay subscriptions plugin instead of linking out. Shows an amount field and a donate button; the URL is ignored."
             use_stripe:
               label: "Stripe donation"
-              description: "Treat the URL as a Stripe Payment Link set to let customers choose what to pay. Shows an amount field and prefills it on Stripe's page; cards and any wallets enabled on the link are offered there. Ignored when BTCPay donation is on."
+              description: "Card donations with an amount field. Logged-in members pay through BTCPay's Stripe method when the BTCPay plugin has card payments on, so the donation is credited like a crypto one. Everyone else uses the URL as a pay-what-you-want Stripe Payment Link; leave the URL empty to offer cards to members only. Ignored when BTCPay donation is on."
             url:
               label: "URL"
               description: "Full support URL"
