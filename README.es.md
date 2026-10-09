@@ -4,6 +4,8 @@
 
 [ENGLISH](README.md) | **ESPAÑOL**
 
+Mantenido por Criptonautas. Sin afiliación ni respaldo de Discourse (Civilized Discourse Construction Kit, Inc.).
+
 Componente de tema de Discourse, independiente de la pasarela de pago, para apoyo a la comunidad, donaciones y widgets de recaudación. El mismo sistema de presentación se reutiliza en modales, publicaciones, plugin outlets y ubicaciones HTML como Discourse Ads.
 
 Normalmente las donaciones son enlaces salientes. Con [discourse-btcpay-subscriptions](https://github.com/somos-criptonautas/discourse-btcpay-subscriptions) instalado, un método puede cobrar dentro de Discourse — ver [Donaciones con BTCPay](#donaciones-con-btcpay). Todas las funciones de BTCPay vuelven al comportamiento anterior cuando el plugin no está, así que el componente funciona igual sin él.

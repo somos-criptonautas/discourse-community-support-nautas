@@ -4,6 +4,8 @@
 
 **ENGLISH** | [ESPAÑOL](README.es.md)
 
+Maintained by Criptonautas. Not affiliated with or endorsed by Discourse (Civilized Discourse Construction Kit, Inc.).
+
 A provider-agnostic Discourse theme component for community support, donations and fundraising widgets. The same presentation system is reused in modals, posts, plugin outlets and HTML placements such as Discourse Ads.
 
 Donations are normally outbound links. With [discourse-btcpay-subscriptions](https://github.com/somos-criptonautas/discourse-btcpay-subscriptions) installed, a method can instead take the payment on-site — see [BTCPay donations](#btcpay-donations). Every BTCPay feature degrades to the previous behaviour when the plugin is absent, so the component works unchanged without it.
