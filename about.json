@@ -1,7 +1,7 @@
 {
   "name": "Community Support",
-  "about_url": "",
-  "license_url": "",
+  "about_url": "https://github.com/somos-criptonautas/discourse-community-support-nautas",
+  "license_url": "https://github.com/somos-criptonautas/discourse-community-support-nautas/blob/main/LICENSE",
   "component": true,
   "license": "MIT",
   "version": "1.0.0"
