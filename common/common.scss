@@ -1389,8 +1389,9 @@
 }
 
 // Right Sidebar Blocks frames each block itself, so ours drops its own frame
-// there. Elsewhere (outlet_view: sidebar) the frame stays.
-.rs-donate-sidebar-block .donate-sidebar {
+// there. Elsewhere (outlet_view: sidebar) the frame stays. The selector repeats
+// the framing rule's own, or that rule is more specific and wins.
+.rs-donate-sidebar-block .donate-component.--view-sidebar .donate-sidebar {
   padding: 0;
   border: 0;
   border-radius: 0;

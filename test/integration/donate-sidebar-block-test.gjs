@@ -42,6 +42,31 @@ module(
         .exists("url_must_contain does not hide it; show_in_routes decides");
     });
 
+    test("drops its own frame inside Right Sidebar Blocks only", async function (assert) {
+      await render(
+        <template>
+          <div class="rs-component rs-donate-sidebar-block">
+            <DonateSidebarBlock />
+          </div>
+          <div class="standalone"><DonateSidebarBlock /></div>
+        </template>
+      );
+
+      const border = (selector) =>
+        getComputedStyle(document.querySelector(selector)).borderTopWidth;
+
+      assert.strictEqual(
+        border(".standalone .donate-sidebar"),
+        "1px",
+        "framed on its own (also proves the theme CSS is loaded)"
+      );
+      assert.strictEqual(
+        border(".rs-donate-sidebar-block .donate-sidebar"),
+        "0px",
+        "no second frame inside Right Sidebar Blocks"
+      );
+    });
+
     test("still respects who may see it", async function (assert) {
       settings.show_for_members = false;
       settings.show_for_anon = false;
