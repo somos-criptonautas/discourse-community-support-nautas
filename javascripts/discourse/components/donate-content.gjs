@@ -105,6 +105,19 @@ export default class DonateContent extends Component {
     return this.donationMethods.find((method) => method.featured) || null;
   }
 
+  // The sidebar has no list below it, so with nothing featured it still needs
+  // a button: the BTCPay method first, then the card one, then any.
+  get sidebarMethod() {
+    const methods = this.donationMethods;
+    return (
+      this.featuredMethod ||
+      methods.find((method) => method.use_btcpay) ||
+      methods.find((method) => method.use_stripe) ||
+      methods[0] ||
+      null
+    );
+  }
+
   get otherDonationMethods() {
     const methods = this.donationMethods;
     const featured = methods.find((method) => method.featured);
@@ -133,18 +146,22 @@ export default class DonateContent extends Component {
             <strong>{{this.sidebarTitle}}</strong>
           </div>
 
+          <p class="donate-sidebar__description">{{trustHTML
+              (i18n (themePrefix "main_heading_content.description"))
+            }}</p>
+
           {{#if this.showSupportBar}}
             <DonateSupportBar @layout="compact" />
           {{/if}}
 
-          {{#if this.featuredMethod}}
+          {{#if this.sidebarMethod}}
             <DonateMethodAction
-              @buttonText={{this.featuredMethod.button_text}}
-              @url={{this.featuredMethod.url}}
-              @copyLabel={{this.featuredMethod.copy_label}}
-              @copyValue={{this.featuredMethod.copy_value}}
-              @useBtcpay={{this.featuredMethod.use_btcpay}}
-              @useStripe={{this.featuredMethod.use_stripe}}
+              @buttonText={{this.sidebarMethod.button_text}}
+              @url={{this.sidebarMethod.url}}
+              @copyLabel={{this.sidebarMethod.copy_label}}
+              @copyValue={{this.sidebarMethod.copy_value}}
+              @useBtcpay={{this.sidebarMethod.use_btcpay}}
+              @useStripe={{this.sidebarMethod.use_stripe}}
             />
           {{/if}}
         </section>

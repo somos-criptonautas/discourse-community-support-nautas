@@ -1239,6 +1239,20 @@
     white-space: nowrap;
   }
 
+  .donate-sidebar__description {
+    margin: 0;
+    color: var(--donate-muted);
+    font-size: var(--font-down-1);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  // Minimal on purpose: the description takes the figures' place. The track
+  // keeps its aria values, so screen readers still hear the percentage.
+  .donate-support-bar__summary {
+    display: none;
+  }
+
   .donate-sidebar__icon {
     display: flex;
     flex: 0 0 1.6rem;
@@ -1261,18 +1275,6 @@
     padding: 0;
     border: 0;
     background: transparent;
-  }
-
-  .donate-support-bar__summary {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.1rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .donate-support-bar__figures strong,
-  .donate-support-bar__percentage {
-    font-size: var(--font-0);
   }
 
   .donate-support-bar__track {
@@ -1384,4 +1386,13 @@
   .donate-modal__hero .donate-supporters__more-button {
     color: var(--secondary);
   }
+}
+
+// Right Sidebar Blocks frames each block itself, so ours drops its own frame
+// there. Elsewhere (outlet_view: sidebar) the frame stays.
+.rs-donate-sidebar-block .donate-sidebar {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }

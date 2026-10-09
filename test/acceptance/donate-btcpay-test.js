@@ -251,6 +251,26 @@ acceptance("Community Support | sidebar view", function (needs) {
   });
 });
 
+acceptance(
+  "Community Support | sidebar view, nothing featured",
+  function (needs) {
+    needs.user();
+    setup(needs, {
+      outlet_view: "sidebar",
+      donation_methods: [LINK_METHOD, { ...BTCPAY_METHOD, featured: false }],
+    });
+
+    test("still offers the BTCPay amount field and button", async function (assert) {
+      await visit("/");
+
+      assert
+        .dom(".donate-sidebar .donate-option-card__amount-form input")
+        .exists();
+      assert.dom(".donate-sidebar__description").exists();
+    });
+  }
+);
+
 acceptance("Community Support | progress view", function (needs) {
   needs.user();
   setup(needs, { outlet_view: "progress" });
