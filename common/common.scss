@@ -262,7 +262,7 @@
     flex-direction: column;
     align-self: center;
     justify-content: center;
-    min-width: min(14rem, 100%);
+    inline-size: min(17rem, 100%);
     gap: 0.5rem;
   }
 
@@ -525,9 +525,12 @@
   // the left and the button on the right, like a search box. Donations are a
   // few digits, so the field is sized for that and the button takes the rest.
   // -----------------------------------------------------------------------
+  // A set width: without one, the field's default browser width decides the
+  // bar's size and crowds out the text next to it.
   .donate-option-card__amount-form {
     display: flex;
     align-items: stretch;
+    inline-size: min(100%, 18rem);
     overflow: hidden;
     margin: 0;
     border: 1px solid rgb(var(--tertiary-rgb), 0.28);
@@ -535,7 +538,7 @@
     background: rgb(var(--tertiary-rgb), 0.06);
 
     .btn-primary {
-      flex: 1 0 auto;
+      flex: 0 0 auto;
       gap: 0.4rem;
       justify-content: center;
       margin: 0;
@@ -551,8 +554,8 @@
   .donate-option-card__amount {
     position: relative;
     display: flex;
-    flex: 0 1 6rem;
-    min-width: 4.5rem;
+    flex: 1 1 6rem;
+    min-width: 5rem;
     align-items: center;
 
     input {
@@ -564,12 +567,21 @@
       border-radius: 0;
       background: transparent;
       font-variant-numeric: tabular-nums;
+      appearance: textfield;
+    }
+
+    // The browser's up/down arrows land on top of the currency suffix.
+    input::-webkit-inner-spin-button,
+    input::-webkit-outer-spin-button {
+      margin: 0;
+      appearance: none;
     }
   }
 
   // Room for the suffix only when there is one to show.
   .donate-option-card__amount:has(.donate-option-card__amount-currency) {
-    flex-basis: 7.5rem;
+    flex-basis: 8.5rem;
+    min-width: 7rem;
 
     input {
       padding-inline-end: 3rem;
@@ -1352,14 +1364,15 @@
 // -------------------------------------------------------------------------//
 .d-modal.donate-modal,
 .donate-embed {
+  // A slightly darker inset panel, so the progress reads as its own part of
+  // the box instead of blending into the gradient behind it.
   .donate-modal__hero .donate-support-bar {
     grid-column: 1 / -1;
-    margin: 0.4rem 0 0;
-    padding: 0.9rem 0 0;
-    border: 0;
-    border-top: 1px solid rgb(var(--secondary-rgb), 0.22);
-    border-radius: 0;
-    background: transparent;
+    margin: 0.6rem 0 0;
+    padding: 0.8rem 1rem 0.85rem;
+    border: 1px solid rgb(var(--secondary-rgb), 0.14);
+    border-radius: calc(var(--donate-radius) - 0.2rem);
+    background: rgb(var(--always-black-rgb), 0.14);
   }
 
   .donate-modal__hero .donate-support-bar__figures strong,
