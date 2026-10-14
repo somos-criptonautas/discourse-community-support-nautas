@@ -41,6 +41,7 @@ es:
       modal_size: "Ancho del modal de apoyo"
       excluded_groups: "Grupos que no deben ver el activador automático, los widgets de outlet ni los embeds genéricos; los bloques contextuales [wrap=donate] y el enlace manual #donate siguen disponibles"
       support_icon: "Icono de la caja de apoyo y del bloque de la barra lateral. Los nombres Phosphor como <code>ph-dt-hand-heart</code> requieren el componente de iconos Phosphor Duotone; usa <code>heart</code> para un icono del núcleo."
+      donate_button_icon: "Icono del botón de donar en la caja de apoyo y en el bloque de la barra lateral, donde el botón no lleva texto. Los nombres Phosphor requieren el componente de iconos Phosphor Duotone; usa <code>arrow-right</code> para un icono del núcleo."
       design: "Diseño visual que usa la interfaz de apoyo"
       default_post_view: "Disposición por defecto de los bloques de apoyo insertados"
       enable_post_embed: "Activar [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] y [wrap=donate-progress] en las respuestas"

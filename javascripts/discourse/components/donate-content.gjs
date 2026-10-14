@@ -162,6 +162,7 @@ export default class DonateContent extends Component {
               @copyValue={{this.sidebarMethod.copy_value}}
               @useBtcpay={{this.sidebarMethod.use_btcpay}}
               @useStripe={{this.sidebarMethod.use_stripe}}
+              @iconOnly={{true}}
             />
           {{/if}}
         </section>
@@ -209,6 +210,7 @@ export default class DonateContent extends Component {
                 @copyValue={{this.featuredMethod.copy_value}}
                 @useBtcpay={{this.featuredMethod.use_btcpay}}
                 @useStripe={{this.featuredMethod.use_stripe}}
+                @iconOnly={{true}}
               />
             </div>
           {{/if}}

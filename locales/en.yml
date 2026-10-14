@@ -41,6 +41,7 @@ en:
       modal_size: "Width of the support modal"
       excluded_groups: "Groups that should not see the automatic support trigger, outlet widgets or generic embeds; contextual [wrap=donate] blocks and the manual #donate link remain available"
       support_icon: "Icon shown in the support box and the sidebar block. Phosphor names such as <code>ph-dt-hand-heart</code> need the Phosphor Duotone icons component installed; use <code>heart</code> for a core icon."
+      donate_button_icon: "Icon on the donate button in the support box and the sidebar block, where the button shows no text. Phosphor names need the Phosphor Duotone icons component; use <code>arrow-right</code> for a core icon."
       design: "Visual design used by the support UI"
       default_post_view: "Default layout used by embedded support blocks"
       enable_post_embed: "Enable [wrap=donate], [wrap=donate-compact], [wrap=donate-minimal] and [wrap=donate-progress] in posts"

@@ -112,6 +112,9 @@ acceptance("Community Support | donation box", function (needs) {
     assert
       .dom(".donate-modal__hero-action a.btn-primary")
       .doesNotExist("a BTCPay method never falls back to an outbound link");
+    assert
+      .dom(".donate-modal__hero-action button[type='submit']")
+      .hasAttribute("aria-label", "Donate", "icon-only, but still named");
     // The plugin's currency wins over the theme's display-only setting.
     assert
       .dom(".donate-modal__hero-action .donate-option-card__amount-currency")

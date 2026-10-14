@@ -67,6 +67,16 @@ export default class DonateMethodAction extends Component {
     return this.submitting || this.modalOpen;
   }
 
+  get buttonIcon() {
+    return settings.donate_button_icon || "arrow-right";
+  }
+
+  get submitLabel() {
+    return this.submitting
+      ? i18n(themePrefix("btcpay.creating"))
+      : this.args.buttonText;
+  }
+
   // BTCPay charges in btcpay_donation_currency, so prefer what the plugin
   // reports over the theme's display-only currency setting.
   get currency() {
@@ -270,18 +280,28 @@ export default class DonateMethodAction extends Component {
           {{/if}}
         </span>
 
-        <button
-          type="submit"
-          class="btn-primary btn btn-icon-text"
-          disabled={{this.busy}}
-        >
-          {{if
-            this.submitting
-            (i18n (themePrefix "btcpay.creating"))
-            @buttonText
-          }}
-          {{#unless this.submitting}}{{icon "arrow-right"}}{{/unless}}
-        </button>
+        {{! In the box and the sidebar the button is an icon; its text stays as the
+            accessible name, so screen readers still hear "Donate". }}
+        {{#if @iconOnly}}
+          <button
+            type="submit"
+            class="btn-primary btn btn-icon no-text"
+            disabled={{this.busy}}
+            aria-label={{this.submitLabel}}
+            title={{this.submitLabel}}
+          >
+            {{icon this.buttonIcon}}
+          </button>
+        {{else}}
+          <button
+            type="submit"
+            class="btn-primary btn btn-icon-text"
+            disabled={{this.busy}}
+          >
+            {{this.submitLabel}}
+            {{#unless this.submitting}}{{icon "arrow-right"}}{{/unless}}
+          </button>
+        {{/if}}
       </form>
 
       {{#if this.error}}

@@ -279,6 +279,8 @@ Design and view are intentionally orthogonal, so every view works with every des
 
 `support_icon` sets the one icon in the layout — the box, the sidebar block, and the fallback when a method has no uploaded logo. It defaults to `ph-dt-hand-heart`, which needs the [Phosphor Duotone icons component](https://github.com/somos-criptonautas/discourse-phosphor-duotone-icons-nautas) installed; set it to `heart` or any other core icon name if you are not using that component.
 
+`donate_button_icon` is the icon on the donate button in the box and the sidebar block, where the button carries no text; its label stays as the accessible name for screen readers. It defaults to `ph-dt-paper-plane-tilt` and has the same Phosphor requirement — use `arrow-right` without it. The method list below the box keeps text buttons, since their labels are what tell the methods apart.
+
 ## Localization
 
 English and Spanish ship with the component; every other locale falls back to English. Method names, descriptions, button labels and hero highlights are translated per item in their own settings, not in the locale files, so admins can localize their own copy without a code change.

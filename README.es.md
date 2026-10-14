@@ -279,6 +279,8 @@ Diseño y vista son ortogonales a propósito: cualquier vista funciona con cualq
 
 `support_icon` define el único icono de la disposición: la caja, el bloque de la barra lateral y el icono de reserva cuando un método no tiene logotipo subido. Por defecto es `ph-dt-hand-heart`, que requiere el [componente de iconos Phosphor Duotone](https://github.com/somos-criptonautas/discourse-phosphor-duotone-icons-nautas) instalado; usa `heart` o cualquier otro icono del núcleo si no usas ese componente.
 
+`donate_button_icon` es el icono del botón de donar en la caja y en el bloque de la barra lateral, donde el botón no lleva texto; su etiqueta se mantiene como nombre accesible para lectores de pantalla. Por defecto es `ph-dt-paper-plane-tilt` y tiene el mismo requisito de Phosphor; sin él, usa `arrow-right`. La lista de métodos bajo la caja mantiene botones con texto, porque sus etiquetas son lo que distingue cada método.
+
 ## Idiomas
 
 El componente incluye inglés y español; el resto de idiomas recurre al inglés. Los nombres de los métodos, las descripciones, las etiquetas de botón y los destacados de la cabecera se traducen por elemento en sus propios ajustes, no en los archivos de idioma, para que los administradores traduzcan sus textos sin tocar código.

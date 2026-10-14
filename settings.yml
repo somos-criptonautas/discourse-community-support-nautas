@@ -30,6 +30,10 @@ support_icon:
   type: string
   default: "ph-dt-hand-heart"
 
+donate_button_icon:
+  type: string
+  default: "ph-dt-paper-plane-tilt"
+
 design:
   type: enum
   default: classic

@@ -552,17 +552,21 @@
   }
 
   .donate-option-card__amount {
-    position: relative;
     display: flex;
     flex: 1 1 6rem;
     min-width: 5rem;
     align-items: center;
 
-    input {
+    // Repeats input[type] so a theme's own number-field styles cannot win.
+    input,
+    input[type="number"] {
+      flex: 1 1 auto;
+      min-width: 0;
       inline-size: 100%;
       height: 100%;
+      box-shadow: none;
       margin: 0;
-      padding-inline: 0.75rem 0.6rem;
+      padding: 0 0.6rem 0 0.75rem;
       border: 0;
       border-radius: 0;
       background: transparent;
@@ -570,7 +574,7 @@
       appearance: textfield;
     }
 
-    // The browser's up/down arrows land on top of the currency suffix.
+    // The browser's up/down arrows would sit between the number and the currency.
     input::-webkit-inner-spin-button,
     input::-webkit-outer-spin-button {
       margin: 0;
@@ -582,19 +586,23 @@
   .donate-option-card__amount:has(.donate-option-card__amount-currency) {
     flex-basis: 8.5rem;
     min-width: 7rem;
-
-    input {
-      padding-inline-end: 3rem;
-    }
   }
 
+  // Part of the field, beside the number: laid out, not laid over, so a
+  // theme's own input styles cannot push it out of line.
   .donate-option-card__amount-currency {
-    position: absolute;
-    inset-inline-end: 0.7rem;
+    flex: 0 0 auto;
+    padding-inline-end: 0.75rem;
     color: var(--donate-muted);
     font-size: var(--font-down-1);
     font-weight: 650;
     pointer-events: none;
+  }
+
+  // Square icon-only button for the box and the sidebar.
+  .donate-option-card__amount-form .btn.no-text {
+    min-inline-size: 2.75rem;
+    padding-inline: 0.85rem;
   }
 
   .donate-option-card__error {
@@ -1291,10 +1299,6 @@
 
   .donate-support-bar__track {
     height: 0.4rem;
-  }
-
-  .donate-option-card__amount input {
-    height: 2.2rem;
   }
 
   .donate-option-card__copy {
